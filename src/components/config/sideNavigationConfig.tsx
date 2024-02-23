@@ -11,14 +11,14 @@ export const sideNavigationConfig: TSideNavigationConfig[] = [
     },
 
     {
-        path: `customization/events/${EPageType.table}`,
-        name: 'Настройка событий',
+        path: `customization/users/${EPageType.table}`,
+        name: 'Настройка пользователей',
         icon: <AlexIcon iconName={EIconToNameMap.schedule}/>,
     },
 
-    {
-        path: `customization/tags/${EPageType.table}`,
-        name: 'Настройка тегов',
-        icon: <AlexIcon iconName={EIconToNameMap.tag}/>,
-    },
+    // {
+    //     path: `customization/tags/${EPageType.table}`,
+    //     name: 'Настройка тегов',
+    //     icon: <AlexIcon iconName={EIconToNameMap.tag}/>,
+    // },
 ]

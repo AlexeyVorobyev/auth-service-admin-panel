@@ -47,16 +47,6 @@ export const AuthPage: FC = () => {
 								<Button size={'large'} variant="contained"
 										onClick={handleSubmit(onSubmit)}>ВОЙТИ</Button>
 							</Stack>
-							<Divider orientation={"horizontal"} variant={'middle'}>
-								<Typography variant={'subtitle1'} textAlign={'center'}>ИЛИ</Typography>
-							</Divider>
-							<Stack justifyContent={'center'}>
-								<Typography variant={'subtitle1'} textAlign={'center'}>
-									Нет аккаунта? <AlexLink to={'../registration'} sx={{
-									textDecoration: 'none',
-									color: theme.palette.primary.main
-								}}>Зарегестрируйтесь</AlexLink></Typography>
-							</Stack>
 						</Stack>
 					</FormProvider>
 				</Paper>

@@ -2,8 +2,9 @@ import {FC, useMemo} from 'react'
 import {Box, CircularProgress, Grid} from '@mui/material'
 import {theme} from '../../theme/theme'
 import {AlexDataView} from '../../../shared-react-components/formUtils/AlexDataView/AlexDataView'
-import { useMeQuery } from '../../../core/redux/api/auth.api.ts'
-import { TMeResponse } from '../../../core/redux/api/types/auth.ts'
+
+import { TMeResponse } from '../../../core/redux/api/types/user.ts'
+import { useMeQuery } from '../../../core/redux/api/user.api.ts'
 
 interface IProps {
 }

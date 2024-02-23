@@ -1,30 +1,28 @@
-import { EventsCard } from '../pages/EventsPage/EventsCard'
-import { EventsForm } from '../pages/EventsPage/EventsForm'
-import { EventsTable } from '../pages/EventsPage/EventsTable'
 import { EPageType, TCustomizationPageConfig } from '../pages/СustomizationPage/СustomizationPage'
-import { endpoints } from '../../core/redux/api/events.api.ts'
+import { UsersTable } from '../pages/UsersPage/UsersTable.tsx'
+import { userEndpoints } from '../../core/redux/api/user.api.ts'
 
 export const customizationPageConfig: Map<string, TCustomizationPageConfig> = new Map([
-    ['events',
+    ['users',
         {
-            deleteQuery: (id: any) => endpoints.eventDelete.initiate(id),
+            deleteQuery: (id: any) => userEndpoints.userDelete.initiate(id),
             [EPageType.table]: {
-                component: <EventsTable/>,
-                title: 'событий',
-                button: 'новое событие',
+                component: <UsersTable/>,
+                title: 'пользователей',
+                button: 'новый пользователь',
             },
-            [EPageType.view]: {
-                component: <EventsCard/>,
-                button: 'событие',
-            },
-            [EPageType.add]: {
-                component: EventsForm,
-                title: 'события',
-            },
-            [EPageType.edit]: {
-                component: EventsForm,
-                title: 'события',
-            },
+            // [EPageType.view]: {
+            //     component: <EventsCard/>,
+            //     button: 'пользователь',
+            // },
+            // [EPageType.add]: {
+            //     component: EventsForm,
+            //     title: 'пользователи',
+            // },
+            // [EPageType.edit]: {
+            //     component: EventsForm,
+            //     title: 'пользователя',
+            // },
         },
     ],
 ])

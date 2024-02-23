@@ -3,6 +3,13 @@ import { isRejectedWithValue } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 import { toastSettings } from '../../../shared-react-components/AlexToastProvider/AlexToastProvider.tsx'
 
+const formatMessage = (message:any):string => {
+    if (Array.isArray(message)) {
+        return message.reduce((res, item) => res + `${item}\n`)
+    }
+    return message
+}
+
 export const errorMiddleware: Middleware =
     () => (next) => (action) => {
         if (!isRejectedWithValue(action)) {
@@ -16,7 +23,7 @@ export const errorMiddleware: Middleware =
             console.log('REJECTED', action)
             if (action.type === 'api/executeMutation/rejected') {
                 const toastPayload = toastSettings.connectionLost
-                toast.error(action.payload.data.message, toastPayload.properties)
+                toast.error(formatMessage(action.payload.data.message), toastPayload.properties)
             } else {
                 const toastPayload = toastSettings.connectionLost
                 toast.error(toastPayload.message, toastPayload.properties)

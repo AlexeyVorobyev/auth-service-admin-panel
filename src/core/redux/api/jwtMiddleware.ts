@@ -1,7 +1,7 @@
 import type { Middleware } from '@reduxjs/toolkit'
 import { isRejectedWithValue } from '@reduxjs/toolkit'
 import { TRefreshResponse } from './types/auth.ts'
-import { getTokensAndExpiry } from '../../../components/functions/authTokenAndExpiry.ts'
+import { getTokensAndExpiry, setTokenAndExpiry } from '../../../components/functions/authTokenAndExpiry.ts'
 import { GLOBAL_CONFIG } from '../../../globalConfig.ts'
 
 const triggerRefresh = () => {
@@ -22,7 +22,6 @@ const triggerRefresh = () => {
             if (response.status === 400) {
                 localStorage.clear()
             } else {
-                // @ts-ignore
                 setTokenAndExpiry(res as TRefreshResponse)
             }
             location.reload()
@@ -36,7 +35,7 @@ export const jwtMiddleware: Middleware =
         }
         if (action && isRejectedWithValue(action)) {
             console.warn('We got a rejected action!', action.payload.status)
-            if (action.payload.status === 401 || action.payload.status === 403) {
+            if (action.payload.status === 401) {
                 if (new Date(getTokensAndExpiry().refreshExpiry as string).getTime() < new Date().getTime()) {
                     localStorage.clear()
                     location.reload()

@@ -1,12 +1,12 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getTokensAndExpiry } from '../../../components/functions/authTokenAndExpiry.ts'
 
 const disabledAuthTokenEndpoints = [
-	'signIn', 'signUp', 'refresh'
+	'signIn'
 ]
 export const api = createApi({
 	reducerPath: 'api',
-	tagTypes: ['graphs', 'events', 'tags'],
+	tagTypes: ['graphs', 'events', 'users'],
 	baseQuery: fetchBaseQuery({
 		prepareHeaders: (headers, api) => {
 			if (disabledAuthTokenEndpoints.includes(api.endpoint)) {
@@ -20,14 +20,3 @@ export const api = createApi({
 })
 
 
-export const constructQueryString = (config: any): string => {
-	let resString = '?'
-
-	for (const key of Object.keys(config)) {
-		resString += `${key}=${config[key as keyof any]}&`
-	}
-
-	console.log('DEBUG QUERYPARAMS', resString)
-
-	return resString === '?' ? '' : resString
-}

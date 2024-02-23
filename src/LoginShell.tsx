@@ -6,7 +6,7 @@ import { routesAuthList } from './components/router/routesAuthList.tsx'
 import { AlexRouter } from './shared-react-components/AlexRouter/AlexRouter.tsx'
 
 export const LoginShell: FC = () => {
-    const loginStatus = true
+    const loginStatus = useLoginStatus()
 
     return (<>
         {loginStatus ? (

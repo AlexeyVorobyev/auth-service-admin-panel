@@ -11,12 +11,6 @@ export const routesAuthList: TRoute[] = [
     },
 
     {
-        path: '/registration',
-        name: 'Страница регистрации',
-        component: <RegistrationPage/>,
-    },
-
-    {
         path: '*',
         name: 'Пересылка',
         component: <Navigate to={'/'}/>,

@@ -25,30 +25,30 @@ export const routesList: TRoute[] = [
     },
 
     {
-        path: `customization/events`,
-        name: 'События',
-        component: <Navigate to={`/customization/events/${EPageType.table}`}/>,
+        path: `customization/users`,
+        name: 'Пользователи',
+        component: <Navigate to={`/customization/users/${EPageType.table}`}/>,
     },
     {
-        path: `customization/events/${EPageType.table}`,
-        name: 'Таблица событий',
+        path: `customization/users/${EPageType.table}`,
+        name: 'Таблица пользователей',
         component: <CustomizationPage config={customizationPageConfig}/>,
     },
-    {
-        path: `customization/events/${EPageType.view}`,
-        name: 'Событие',
-        component: <CustomizationPage config={customizationPageConfig}/>,
-    },
-    {
-        path: `customization/events/${EPageType.edit}`,
-        name: 'Настройка события',
-        component: <CustomizationPage config={customizationPageConfig}/>,
-    },
-    {
-        path: `customization/events/${EPageType.add}`,
-        name: 'Добавление события',
-        component: <CustomizationPage config={customizationPageConfig}/>,
-    },
+    // {
+    //     path: `customization/users/${EPageType.view}`,
+    //     name: 'Пользователь',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
+    // {
+    //     path: `customization/users/${EPageType.edit}`,
+    //     name: 'Настройка пользователей',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
+    // {
+    //     path: `customization/users/${EPageType.add}`,
+    //     name: 'Добавление пользователя',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
 ]
 
 const mapRoutesListPaths = (routesList: TRoute[]): string[] => {

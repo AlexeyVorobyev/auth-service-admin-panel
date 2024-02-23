@@ -1,60 +1,26 @@
-import {api} from './api'
-import {GLOBAL_CONFIG} from "../../../globalConfig.ts"
-import {
-	TMeResponse,
-	TRefreshPayload,
-	TRefreshResponse,
-	TSignInPayload,
-	TSignInResponse,
-	TSignUpPayload
-} from "./types/auth.ts"
+import { api } from './api'
+import { GLOBAL_CONFIG } from '../../../globalConfig.ts'
+import { TSignInPayload, TSignInResponse } from './types/auth.ts'
+import { TEventEntity, TEventPatch, TEventPost, TEventsPayload, TEventsResponse } from './types/events.ts'
+import { TEntityWithId } from './types/types.ts'
+import { constructURLWithQuery } from '../functions/constructURLWithQuery.ts'
 
 export const authApi = api.injectEndpoints({
-	endpoints: (builder) => ({
-		signIn: builder.mutation<TSignInResponse, TSignInPayload>({
-			query: (body) => ({
-				url: `${GLOBAL_CONFIG.apiAuthServiceAddress}/auth/sign-in`,
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body
-			}),
-		}),
-        signUp: builder.mutation<undefined, TSignUpPayload>({
+    endpoints: (builder) => ({
+        signIn: builder.mutation<TSignInResponse, TSignInPayload>({
             query: (body) => ({
-                url: `${GLOBAL_CONFIG.apiAuthServiceAddress}/auth/sign-up`,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body
-            }),
-        }),
-        refresh: builder.mutation<TRefreshResponse, TRefreshPayload>({
-            query: (body) => ({
-                url: `${GLOBAL_CONFIG.apiAuthServiceAddress}/auth/refresh`,
+                url: `${GLOBAL_CONFIG.apiAuthServiceAddress}/auth/sign-in`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body
+                body,
             }),
         }),
-		me: builder.query<TMeResponse, undefined>({
-			query: () => ({
-				url: `${GLOBAL_CONFIG.apiAuthServiceAddress}/user/me`,
-				method: 'GET',
-			}),
-		})
-	}),
-	overrideExisting: false
+    }),
+    overrideExisting: false,
 })
 
 export const {
-	useSignInMutation,
-    useSignUpMutation,
-    useRefreshMutation,
-	useMeQuery,
-	endpoints: authEndpoints
+    useSignInMutation,
 } = authApi

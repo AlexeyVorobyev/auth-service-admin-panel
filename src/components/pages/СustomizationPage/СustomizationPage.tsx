@@ -25,15 +25,15 @@ export type TCustomizationPageConfig = {
         title: string,
         button: string
     },
-    [EPageType.view]: {
+    [EPageType.view]?: {
         component: ReactNode,
         button: string
     },
-    [EPageType.add]: {
+    [EPageType.add]?: {
         component: FC<any>,
         title: string
     },
-    [EPageType.edit]: {
+    [EPageType.edit]?: {
         component: FC<any>,
         title: string
     },
@@ -84,7 +84,7 @@ export const CustomizationPage: FC<ICustomizationPageProps> = ({ config }) => {
                                 button={
                                     <Button variant={'contained'} color={'error'}>
                                         <Typography variant={'button'}>
-                                            Удалить {(config.get(namespace)!)[pageState].button}
+                                            Удалить {(config.get(namespace)!)[pageState]!.button}
                                         </Typography>
                                     </Button>
                                 }
@@ -124,7 +124,7 @@ export const CustomizationPage: FC<ICustomizationPageProps> = ({ config }) => {
                             <AlexLink to={`./../edit?id=${searchParams.get('id')}`}>
                                 <Button variant={'contained'}>
                                     <Typography
-                                        variant={'button'}>Редактировать {(config.get(namespace)!)[pageState].button}</Typography>
+                                        variant={'button'}>Редактировать {(config.get(namespace)!)[pageState]!.button}</Typography>
                                 </Button>
                             </AlexLink>
                         )}
@@ -199,7 +199,7 @@ export const CustomizationPage: FC<ICustomizationPageProps> = ({ config }) => {
                 <SwitchRender/>
                 <Divider/>
                 <Box sx={{ display: 'flex', flex: 1, height: 0 }}>
-                    {(config.get(namespace)!)[pageState].component}
+                    {(config.get(namespace)!)[pageState]!.component}
                 </Box>
             </Stack>
         )}
