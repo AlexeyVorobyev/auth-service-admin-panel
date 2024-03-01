@@ -1,16 +1,15 @@
 import React, { FC } from 'react'
-import { store } from './core/redux/store/store.ts'
 import { globalStyles, theme } from './components/theme/theme.ts'
 import { GlobalStyles } from '@mui/material'
-import { Provider } from 'react-redux'
 import { ThemeProvider } from '@mui/system'
 import { BrowserRouter } from 'react-router-dom'
 import { AlexToastProvider } from './shared-react-components/AlexToastProvider/AlexToastProvider.tsx'
 import { LoginShell } from './LoginShell.tsx'
+import { ApolloProviderWithClient } from './core/apollo/apollo-provider-with-client.tsx'
 
 const App: FC = () => (
     <React.StrictMode>
-        <Provider store={store}>
+        <ApolloProviderWithClient>
             <ThemeProvider theme={theme}>
                 <GlobalStyles styles={globalStyles()}/>
                 <BrowserRouter>
@@ -19,7 +18,7 @@ const App: FC = () => (
                     </AlexToastProvider>
                 </BrowserRouter>
             </ThemeProvider>
-        </Provider>
+        </ApolloProviderWithClient>
     </React.StrictMode>
 )
 

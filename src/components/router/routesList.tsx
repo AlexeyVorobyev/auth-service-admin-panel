@@ -1,9 +1,9 @@
-import { CustomizationPage, EPageType } from '../pages/СustomizationPage/СustomizationPage'
 import { Navigate } from 'react-router-dom'
-import { NotExistPage } from '../pages/NotExistPage/NotExistPage.tsx'
-import { CabinetPage } from '../pages/CabinetPage/CabinetPage.tsx'
+import { NotExistPage } from '../page/not-exist/not-exist-page.component.tsx'
+import { CabinetPage } from '../page/cabinet/cabinet-page.component.tsx'
 import { TRoute } from '../../shared-react-components/AlexRouter/AlexRouter.tsx'
-import { customizationPageConfig } from '../config/customizationPageConfig.tsx'
+import { CustomizationPage, EPageType } from '../page/customization/customization-page.component.tsx'
+import { customizationPageConfig } from '../page/customization/data/customization-page-config.data.tsx'
 
 export const routesList: TRoute[] = [
     {

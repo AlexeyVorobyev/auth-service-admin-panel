@@ -1,9 +1,9 @@
 type TConfig = {
     apiAuthServiceAddress: string,
-    apiEventServiceAddress: string
+    entrypointServiceNginxAddress: string
 }
 
 export const GLOBAL_CONFIG: TConfig = {
     apiAuthServiceAddress: import.meta.env.VITE_APP_API_AUTH_SERVICE_ADDRESS,
-    apiEventServiceAddress: import.meta.env.VITE_APP_API_EVENT_SERVICE_ADDRESS || 'http://85.175.194.251:50443/api/event-service/'
+    entrypointServiceNginxAddress: import.meta.env.VITE_APP_ENTRYPOINT_SERVICE_NGINX_ADDRESS,
 }

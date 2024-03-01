@@ -9,4 +9,8 @@ git submodule update --init --recursive
 # git submodules update
 git submodule update --recursive --remote
 ```
-
+## Для загрузки зависимостей
+```shell
+# node_modules
+yarn install --ignore-engines
+```

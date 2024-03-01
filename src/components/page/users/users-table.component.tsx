@@ -1,0 +1,102 @@
+import { FC, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import { PER_PAGE_OPTIONS } from '../../../globalConstants.ts'
+import {
+    EUsePageStateMode,
+    useAlexPageState,
+} from '../../../shared-react-components/functions/useAlexPageState/useAlexPageState.tsx'
+import { UsersTableColumns } from './columns.data.tsx'
+import { varsBehaviourMapUsers } from './vars-behaviour-map-users.adapter.ts'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+    UsersTableDeleteUserByIdDocument,
+    UsersTableDeleteUserByIdMutation,
+    UsersTableGetUserListDocument,
+    UsersTableGetUserListQuery,
+    UsersTableGetUserListQueryVariables,
+} from '../../../types/graphql/graphql.ts'
+import { alexFiltersMap } from '../../config/alex-filters-map.data.tsx'
+import {
+    AlexDataTable,
+    EActionDeleteType,
+} from '../../../shared-react-components/alex-data-table/alex-data-table.component.tsx'
+
+enum EUsersTableStoredParams {
+    page = 'page',
+    perPage = 'perPage'
+}
+
+export const UsersTable: FC = () => {
+    const [lazyGetUserListQuery, {
+        data: getUserListQueryData,
+    }] = useLazyQuery<UsersTableGetUserListQuery>(UsersTableGetUserListDocument)
+    const [deleteUserByIdMutation] = useMutation<UsersTableDeleteUserByIdMutation>(UsersTableDeleteUserByIdDocument)
+
+    const {
+        variables: userListInput,
+        storedOptions: serverSideOptions,
+        setStoredOptions: setServerSideOptions,
+    } = useAlexPageState({
+        varsBehaviorMap: varsBehaviourMapUsers,
+        modeWrite: [
+            EUsePageStateMode.localStorage,
+            EUsePageStateMode.queryString,
+        ],
+        modeRead: [
+            EUsePageStateMode.queryString,
+            EUsePageStateMode.localStorage,
+        ],
+        storageKey: 'usersTableStorage',
+        defaultValue: new Map([
+            [EUsersTableStoredParams.perPage, 10],
+            [EUsersTableStoredParams.page, 0],
+        ] as [EUsersTableStoredParams, any][]),
+    })
+
+    useEffect(() => {
+        userListInput && lazyGetUserListQuery({
+            variables: {
+                input: userListInput,
+            } as UsersTableGetUserListQueryVariables,
+        })
+    }, [userListInput])
+
+    const location = useLocation()
+
+    return (
+        <AlexDataTable columns={UsersTableColumns}
+                       data={getUserListQueryData?.user.list.data}
+                       filtersMap={alexFiltersMap}
+                       availablePages={getUserListQueryData?.user.list.meta.totalPages}
+                       perPageOptions={PER_PAGE_OPTIONS}
+                       availableElements={getUserListQueryData?.user.list.meta.totalElements}
+                       columnsSelect simpleFilter footer downloadCSV
+                       filterListIds={[
+                           // 'tagFilter',
+                       ]}
+                       serverSideOptions={serverSideOptions}
+                       setServerSideOptions={setServerSideOptions}
+                       actionsConfig={{
+                           // view: {
+                           //     columnName: 'id',
+                           //     path: `./../${EPageType.view}`,
+                           //     params: new URLSearchParams([
+                           //         ['from', JSON.stringify(location.pathname + location.search)],
+                           //     ]),
+                           // },
+                           // edit: {
+                           //     columnName: 'id',
+                           //     path: `./../${EPageType.edit}`,
+                           //     params: new URLSearchParams([
+                           //         ['from', JSON.stringify(location.pathname + location.search)],
+                           //     ]),
+                           // },
+                           delete: {
+                               columnName: 'id',
+                               mutation: deleteUserByIdMutation,
+                               showModal: true,
+                               type: EActionDeleteType.apolloClient,
+                           },
+                       }}/>
+    )
+}
