@@ -26,6 +26,7 @@ export const varsBehaviourMapUsers = (initialVars: any): TUserListInput => {
         ...(initialVars.perPage && { perPage: Number(initialVars.perPage) }),
         ...(initialVars.sort && { sort: resSort }),
         ...(initialVars.simpleFilter && { simpleFilter: initialVars.simpleFilter }),
+        ...(initialVars.userRole && { roleFilter: initialVars.userRole }),
     }
 
     console.log('DEBUG MUTATED_VARS', mutatedVars)

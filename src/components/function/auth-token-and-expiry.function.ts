@@ -1,3 +1,12 @@
+import { TTokenDataAttributes } from '../../types/graphql/graphql.ts'
+import { ETokenProcessorPageSearchParams } from '../page/token-processor/token-processor-page.component.tsx'
+
+export enum ETokenAndExpiryLocalStorageKeys {
+	refreshToken = 'refreshToken',
+	refreshExpiry = 'refreshExpiry',
+	accessToken = 'accessToken',
+	accessExpiry = 'accessExpiry'
+}
 
 interface IGetTokensAndExpiryReturnValue {
 	refreshToken: string | null,
@@ -8,9 +17,16 @@ interface IGetTokensAndExpiryReturnValue {
 
 export const getTokensAndExpiry = (): IGetTokensAndExpiryReturnValue => {
 	return {
-		refreshToken: localStorage.getItem('refreshToken'),
-		refreshExpiry: localStorage.getItem('refreshExpiry'),
-		accessToken: localStorage.getItem('accessToken'),
-		accessExpiry: localStorage.getItem('accessExpiry'),
+		refreshToken: localStorage.getItem(ETokenAndExpiryLocalStorageKeys.refreshToken),
+		refreshExpiry: localStorage.getItem(ETokenAndExpiryLocalStorageKeys.refreshExpiry),
+		accessToken: localStorage.getItem(ETokenAndExpiryLocalStorageKeys.accessToken),
+		accessExpiry: localStorage.getItem(ETokenAndExpiryLocalStorageKeys.accessExpiry),
 	}
+}
+
+export const setTokensAndExpiry = (tokenData: TTokenDataAttributes) => {
+	localStorage.setItem(ETokenAndExpiryLocalStorageKeys.accessToken, tokenData.accessToken)
+	localStorage.setItem(ETokenAndExpiryLocalStorageKeys.refreshToken, tokenData.refreshToken)
+	localStorage.setItem(ETokenAndExpiryLocalStorageKeys.accessExpiry, tokenData.accessTokenTTL)
+	localStorage.setItem(ETokenAndExpiryLocalStorageKeys.accessExpiry, tokenData.refreshTokenTTL)
 }

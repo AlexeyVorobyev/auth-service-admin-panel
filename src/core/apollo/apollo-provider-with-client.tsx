@@ -1,11 +1,14 @@
 import { FC, ReactNode } from 'react'
 import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client'
-import { serverErrorAfterware } from './server-error-afterware.ts'
+import { serverErrorAfterware } from './afterware/server-error-afterware.ts'
 import { GLOBAL_CONFIG } from '../../globalConfig.ts'
 import { setContext } from '@apollo/client/link/context'
 import {
-    ETokenProcessorPageSearchParams,
-} from '../../components/page/token-processor/token-processor-page.component.tsx'
+    ETokenAndExpiryLocalStorageKeys,
+    getTokensAndExpiry,
+    setTokensAndExpiry,
+} from '../../components/function/auth-token-and-expiry.function.ts'
+import { ApolloGetAuthRefreshDocument } from '../../types/graphql/graphql.ts'
 
 const cache = new InMemoryCache()
 
@@ -14,7 +17,20 @@ const httpLink = createHttpLink({
 })
 
 const authLink = setContext((_, { headers }) => {
-    const token = localStorage.getItem(ETokenProcessorPageSearchParams.accessToken)
+    if (getTokensAndExpiry().accessExpiry! < Date.now().toString() && getTokensAndExpiry().accessExpiry) {
+        defaultClient.query({
+            query: ApolloGetAuthRefreshDocument,
+            variables: {
+                input: {
+                    token: getTokensAndExpiry().refreshToken!,
+                },
+            },
+        }).then((response) => {
+            setTokensAndExpiry(response.data.auth.refresh)
+        })
+    }
+
+    const token = localStorage.getItem(ETokenAndExpiryLocalStorageKeys.accessToken)
 
     return {
         headers: {
@@ -37,10 +53,8 @@ interface IApolloProviderWithClientProps {
     children: ReactNode
 }
 
-export const ApolloProviderWithClient: FC<IApolloProviderWithClientProps> = ({ children }) => {
-    return (
-        <ApolloProvider client={defaultClient}>
-            {children}
-        </ApolloProvider>
-    )
-}
+export const ApolloProviderWithClient: FC<IApolloProviderWithClientProps> = ({ children }) => (
+    <ApolloProvider client={defaultClient}>
+        {children}
+    </ApolloProvider>
+)

@@ -20,6 +20,7 @@ import {
     AlexDataTable,
     EActionDeleteType,
 } from '../../../shared-react-components/alex-data-table/alex-data-table.component.tsx'
+import { EPageType } from '../customization/customization-page.component.tsx'
 
 enum EUsersTableStoredParams {
     page = 'page',
@@ -72,25 +73,27 @@ export const UsersTable: FC = () => {
                        availableElements={getUserListQueryData?.user.list.meta.totalElements}
                        columnsSelect simpleFilter footer downloadCSV
                        filterListIds={[
-                           // 'tagFilter',
+                           'periodCreate',
+                           'periodUpdate',
+                           'userRole'
                        ]}
                        serverSideOptions={serverSideOptions}
                        setServerSideOptions={setServerSideOptions}
                        actionsConfig={{
-                           // view: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.view}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
-                           // edit: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.edit}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
+                           view: {
+                               columnName: 'id',
+                               path: `./../${EPageType.view}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
+                           edit: {
+                               columnName: 'id',
+                               path: `./../${EPageType.edit}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
                            delete: {
                                columnName: 'id',
                                mutation: deleteUserByIdMutation,

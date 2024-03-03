@@ -34,11 +34,11 @@ export const routesList: TRoute[] = [
         name: 'Таблица пользователей',
         component: <CustomizationPage config={customizationPageConfig}/>,
     },
-    // {
-    //     path: `customization/users/${EPageType.view}`,
-    //     name: 'Пользователь',
-    //     component: <CustomizationPage config={customizationPageConfig}/>,
-    // },
+    {
+        path: `customization/users/${EPageType.view}`,
+        name: 'Пользователь',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
     // {
     //     path: `customization/users/${EPageType.edit}`,
     //     name: 'Настройка пользователей',

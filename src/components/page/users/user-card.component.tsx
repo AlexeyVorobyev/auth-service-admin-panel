@@ -1,38 +1,49 @@
 import React, { FC, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material'
 import { theme } from '../../theme/theme'
 import { AlexDataView } from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView'
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { CabinetPageGetMeDocument, CabinetPageGetMeQuery } from '../../../types/graphql/graphql.ts'
-import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
+import { useLazyQuery } from '@apollo/client'
+import {
+    UserCardGetUserRecordDocument,
+    UserCardGetUserRecordQuery,
+    UserCardGetUserRecordQueryVariables,
+} from '../../../types/graphql/graphql.ts'
 import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
+import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
 import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 
+export const UserCard: FC = () => {
+    const [searchParams] = useSearchParams()
 
-interface IProps {
-}
-
-export const CabinetPage: FC<IProps> = () => {
-    const [lazyGetMeQuery, {
-        data: getMeQueryData,
-        loading: getMeQueryDataLoading,
-    }] = useLazyQuery<CabinetPageGetMeQuery>(CabinetPageGetMeDocument)
+    const [lazyGetUserRecord, {
+        data: getUserRecordQueryData,
+        loading: getUserRecordQueryLoading,
+    }] = useLazyQuery<UserCardGetUserRecordQuery>(UserCardGetUserRecordDocument)
 
     useEffect(() => {
-        lazyGetMeQuery()
-    },[])
+        const id = searchParams.get('id')
+        if (id) {
+            lazyGetUserRecord({
+                variables: {
+                    input: {
+                        id: id,
+                    },
+                } as UserCardGetUserRecordQueryVariables,
+            })
+        }
+    }, [searchParams])
 
-    const meData = useMemo(() => getMeQueryData?.user.recordMe, [getMeQueryData])
+    const userData = useMemo(() => getUserRecordQueryData?.user.record, [getUserRecordQueryData])
 
     return (
         <Box sx={{
             width: '100%',
             display: 'flex',
-            height: '100%',
             flex: 1,
             overflowY: 'scroll',
         }}>
-            {getMeQueryDataLoading && (
+            {getUserRecordQueryLoading && (
                 <Box sx={{
                     width: '100%',
                     height: '100%',
@@ -43,7 +54,7 @@ export const CabinetPage: FC<IProps> = () => {
                     <CircularProgress/>
                 </Box>
             )}
-            {(!getMeQueryDataLoading && meData) && (
+            {(!getUserRecordQueryLoading && userData) && (
                 <Box sx={{
                     width: '100%',
                     padding: theme.spacing(2),
@@ -57,29 +68,29 @@ export const CabinetPage: FC<IProps> = () => {
                                 <Grid container spacing={theme.spacing(2)}>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'ID'}>
-                                            {meData.id}
+                                            {userData.id}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Почта'}>
-                                            {meData.email}
+                                            {userData.email}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Роль сервиса авторизации'}>
                                             <Box>
-                                                <AlexChip label={EERoleToRusName[meData.role]} sx={{ width: '100px' }}/>
+                                                <AlexChip label={EERoleToRusName[userData.role]} sx={{ width: '100px' }}/>
                                             </Box>
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Дата создания'}>
-                                            {meData.createdAt}
+                                            {userData.createdAt}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Дата последнего изменения'}>
-                                            {meData.updatedAt}
+                                            {userData.updatedAt}
                                         </AlexDataView>
                                     </Grid>
                                 </Grid>
@@ -89,9 +100,9 @@ export const CabinetPage: FC<IProps> = () => {
                             name: 'externalServices',
                             title: 'Внешние сервисы',
                             body: (<>
-                                {meData.externalServices.length ? (
+                                {userData.externalServices.length ? (
                                     <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {meData.externalServices.map((item) => (
+                                        {userData.externalServices.map((item) => (
                                             <AlexChip label={`${item.name}`} key={item.id}/>
                                         ))}
                                     </Stack>
@@ -104,9 +115,9 @@ export const CabinetPage: FC<IProps> = () => {
                             name: 'externalRoles',
                             title: 'Роли во внешних сервисах',
                             body: (<>
-                                {meData.externalServices.length ? (
+                                {userData.externalServices.length ? (
                                     <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {meData.externalRoles.map((item) => (
+                                        {userData.externalRoles.map((item) => (
                                             <AlexChip label={`${item.externalService.name}:${item.name}`} key={item.id}/>
                                         ))}
                                     </Stack>
@@ -116,8 +127,7 @@ export const CabinetPage: FC<IProps> = () => {
                             </>),
                         },
                     ]}/>
-                </Box>
-            )}
+                </Box>)}
         </Box>
     )
 }

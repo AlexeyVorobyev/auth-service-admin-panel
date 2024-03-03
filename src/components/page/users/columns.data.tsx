@@ -1,9 +1,11 @@
-import { TCustomDataTableColumn } from '../../../shared-react-components/alex-data-table/AlexDataTable'
+
 import { theme } from '../../theme/theme.ts'
-import { AlexCheckBox } from '../../../shared-react-components/formUtils/AlexCheckBox/AlexCheckBox.tsx'
+import { AlexCheckBox } from '../../../shared-react-components/form-utils/AlexCheckBox/AlexCheckBox.tsx'
 import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
 import { Stack } from '@mui/material'
 import { TUserAttributes } from '../../../types/graphql/graphql.ts'
+import { TCustomDataTableColumn } from '../../../shared-react-components/alex-data-table/alex-data-table.component.tsx'
+import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 
 export const UsersTableColumns: TCustomDataTableColumn[] = [
     {
@@ -28,7 +30,7 @@ export const UsersTableColumns: TCustomDataTableColumn[] = [
         id: 'role',
         label: 'Роль сервиса авторизации',
         format: (value: TUserAttributes) => (
-            <AlexChip label={value.role}/>
+            <AlexChip label={EERoleToRusName[value.role]}/>
         ),
     },
     {

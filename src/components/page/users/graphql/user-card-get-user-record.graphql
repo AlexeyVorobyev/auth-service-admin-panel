@@ -1,11 +1,12 @@
-query CabinetPageGetMe {
+query UserCardGetUserRecord ($input: TIdInput!) {
     user {
-        recordMe {
+        record(idInput: $input) {
             id
             email
             role
             createdAt
             updatedAt
+            verified
             externalRoles {
                 id
                 name
@@ -17,6 +18,10 @@ query CabinetPageGetMe {
             externalServices {
                 id
                 name
+                externalRoles {
+                    id
+                    name
+                }
             }
         }
     }
