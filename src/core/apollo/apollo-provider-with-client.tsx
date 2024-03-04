@@ -10,8 +10,6 @@ import {
 } from '../../components/function/auth-token-and-expiry.function.ts'
 import { ApolloGetAuthRefreshDocument } from '../../types/graphql/graphql.ts'
 
-const cache = new InMemoryCache()
-
 const httpLink = createHttpLink({
     uri: GLOBAL_CONFIG.apiAuthServiceAddress,
 })
@@ -41,12 +39,20 @@ const authLink = setContext((_, { headers }) => {
 })
 
 const defaultClient = new ApolloClient({
-    cache,
+    cache: new InMemoryCache(),
     link: authLink.concat(
         serverErrorAfterware.concat(
             httpLink,
         ),
     ),
+    defaultOptions: {
+        query: {
+            fetchPolicy: 'no-cache',
+        },
+        mutate: {
+            fetchPolicy: 'no-cache',
+        },
+    },
 })
 
 interface IApolloProviderWithClientProps {
