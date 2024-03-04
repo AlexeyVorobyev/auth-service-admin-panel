@@ -31,10 +31,20 @@ export const alexFiltersMap: Map<string, IAlexFilter> = new Map([
                                             configFirstInput={{
                                                 label: 'Начальная дата',
                                                 type: EDatePickerType.dateTime,
+                                                slotProps: {
+                                                    field: {
+                                                        clearable: true,
+                                                    },
+                                                },
                                             }}
                                             configSecondInput={{
                                                 label: 'Конечная дата',
                                                 type: EDatePickerType.dateTime,
+                                                slotProps: {
+                                                    field: {
+                                                        clearable: true,
+                                                    },
+                                                },
                                             }}/>
         ),
     }],
@@ -45,10 +55,20 @@ export const alexFiltersMap: Map<string, IAlexFilter> = new Map([
                                             configFirstInput={{
                                                 label: 'Начальная дата',
                                                 type: EDatePickerType.dateTime,
+                                                slotProps: {
+                                                    field: {
+                                                        clearable: true,
+                                                    },
+                                                },
                                             }}
                                             configSecondInput={{
                                                 label: 'Конечная дата',
                                                 type: EDatePickerType.dateTime,
+                                                slotProps: {
+                                                    field: {
+                                                        clearable: true,
+                                                    },
+                                                },
                                             }}/>
         ),
     }],

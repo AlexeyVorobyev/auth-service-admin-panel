@@ -27,6 +27,18 @@ export const varsBehaviourMapUsers = (initialVars: any): TUserListInput => {
         ...(initialVars.sort && { sort: resSort }),
         ...(initialVars.simpleFilter && { simpleFilter: initialVars.simpleFilter }),
         ...(initialVars.userRole && { roleFilter: initialVars.userRole }),
+        ...(initialVars.periodCreate && {
+            createDatePeriod: {
+                startDate: initialVars.periodCreate.startDate,
+                endDate: initialVars.periodCreate.finishDate
+            }
+        }),
+        ...(initialVars.periodUpdate && {
+            createDatePeriod: {
+                startDate: initialVars.periodUpdate.startDate,
+                endDate: initialVars.periodUpdate.finishDate
+            }
+        })
     }
 
     console.log('DEBUG MUTATED_VARS', mutatedVars)

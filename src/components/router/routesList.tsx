@@ -39,16 +39,16 @@ export const routesList: TRoute[] = [
         name: 'Пользователь',
         component: <CustomizationPage config={customizationPageConfig}/>,
     },
-    // {
-    //     path: `customization/users/${EPageType.edit}`,
-    //     name: 'Настройка пользователей',
-    //     component: <CustomizationPage config={customizationPageConfig}/>,
-    // },
-    // {
-    //     path: `customization/users/${EPageType.add}`,
-    //     name: 'Добавление пользователя',
-    //     component: <CustomizationPage config={customizationPageConfig}/>,
-    // },
+    {
+        path: `customization/users/${EPageType.edit}`,
+        name: 'Настройка пользователей',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
+    {
+        path: `customization/users/${EPageType.add}`,
+        name: 'Добавление пользователя',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
 ]
 
 const mapRoutesListPaths = (routesList: TRoute[]): string[] => {
