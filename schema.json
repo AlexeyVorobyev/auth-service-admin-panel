@@ -1716,7 +1716,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "TUserAttributes",
+                "name": "TExternalServiceAttributes",
                 "ofType": null
               }
             },

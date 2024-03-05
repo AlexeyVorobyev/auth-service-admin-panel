@@ -11,8 +11,7 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import {
     UserCardGetUserRecordDocument,
     UsersTableDeleteUserByIdDocument,
-    UsersTableDeleteUserByIdMutation,
-    UsersTableGetUserListDocument,
+    UsersTableDeleteUserByIdMutation, UsersTableGetUserListDocument,
     UsersTableGetUserListQuery,
     UsersTableGetUserListQueryVariables,
 } from '../../../types/graphql/graphql.ts'
@@ -30,7 +29,7 @@ enum EUsersTableStoredParams {
 
 export const UsersTable: FC = () => {
     const [lazyGetUserListQuery, {
-        data: getUserListQueryData,
+        data: userListQueryData,
     }] = useLazyQuery<UsersTableGetUserListQuery>(UsersTableGetUserListDocument)
 
     const [deleteUserByIdMutation] = useMutation<UsersTableDeleteUserByIdMutation>(UsersTableDeleteUserByIdDocument, {
@@ -73,11 +72,11 @@ export const UsersTable: FC = () => {
 
     return (
         <AlexDataTable columns={UsersTableColumns}
-                       data={getUserListQueryData?.user.list.data}
+                       data={userListQueryData?.user.list.data}
                        filtersMap={alexFiltersMap}
-                       availablePages={getUserListQueryData?.user.list.meta.totalPages}
+                       availablePages={userListQueryData?.user.list.meta.totalPages}
                        perPageOptions={PER_PAGE_OPTIONS}
-                       availableElements={getUserListQueryData?.user.list.meta.totalElements}
+                       availableElements={userListQueryData?.user.list.meta.totalElements}
                        columnsSelect simpleFilter footer downloadCSV
                        filterListIds={[
                            'periodCreate',

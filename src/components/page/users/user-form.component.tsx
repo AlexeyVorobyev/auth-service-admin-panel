@@ -24,7 +24,7 @@ import {
     UserFormCreateUserMutationVariables,
     UserFormUpdateUserDocument,
     UserFormUpdateUserMutation,
-    UserFormUpdateUserMutationVariables, UsersTableGetUserListDocument,
+    UserFormUpdateUserMutationVariables, ExternalServicesTableGetExternalServiceListDocument,
 } from '../../../types/graphql/graphql.ts'
 import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
@@ -49,14 +49,14 @@ export const UserForm: FC<IUserFormProps> = ({
 
     const [updateUserMutation] = useMutation<UserFormUpdateUserMutation>(UserFormUpdateUserDocument, {
         refetchQueries: [
-            UsersTableGetUserListDocument,
+            ExternalServicesTableGetExternalServiceListDocument,
             UserCardGetUserRecordDocument,
         ],
     })
 
     const [createUserMutation] = useMutation<UserFormCreateUserMutation>(UserFormCreateUserDocument, {
         refetchQueries: [
-            UsersTableGetUserListDocument,
+            ExternalServicesTableGetExternalServiceListDocument,
             UserCardGetUserRecordDocument,
         ],
     })

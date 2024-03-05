@@ -14,7 +14,7 @@ const httpLink = createHttpLink({
     uri: GLOBAL_CONFIG.apiAuthServiceAddress,
 })
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext( (_, { headers }) => {
     if (parseInt(getTokensAndExpiry().accessExpiry!) < Date.parse(new Date().toUTCString())) {
         defaultClient.query({
             query: ApolloGetAuthRefreshDocument,
@@ -25,6 +25,7 @@ const authLink = setContext((_, { headers }) => {
             },
         }).then((response) => {
             setTokensAndExpiry(response.data.auth.refresh)
+            window.location.reload()
         })
     }
 

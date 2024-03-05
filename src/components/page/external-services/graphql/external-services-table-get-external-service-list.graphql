@@ -1,0 +1,20 @@
+query ExternalServicesTableGetExternalServiceList ($input: TExternalServiceListInput) {
+    externalService {
+        list (input: $input) {
+            data {
+                id
+                createdAt
+                updatedAt
+                externalRoles {
+                    name
+                }
+            }
+            meta {
+                currentPage
+                elementsPerPage
+                totalElements
+                totalPages
+            }
+        }
+    }
+}

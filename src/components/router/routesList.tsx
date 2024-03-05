@@ -49,6 +49,32 @@ export const routesList: TRoute[] = [
         name: 'Добавление пользователя',
         component: <CustomizationPage config={customizationPageConfig}/>,
     },
+
+    {
+        path: `customization/externalServices`,
+        name: 'Внешние сервисы',
+        component: <Navigate to={`/customization/externalServices/${EPageType.table}`}/>,
+    },
+    {
+        path: `customization/externalServices/${EPageType.table}`,
+        name: 'Таблица внешних сервисов',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
+    // {
+    //     path: `customization/externalServices/${EPageType.view}`,
+    //     name: 'Внешний сервис',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
+    // {
+    //     path: `customization/externalServices/${EPageType.edit}`,
+    //     name: 'Настройка внешних сервисов',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
+    // {
+    //     path: `customization/externalServices/${EPageType.add}`,
+    //     name: 'Добавление внешнего сервиса',
+    //     component: <CustomizationPage config={customizationPageConfig}/>,
+    // },
 ]
 
 const mapRoutesListPaths = (routesList: TRoute[]): string[] => {

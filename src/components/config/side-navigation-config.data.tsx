@@ -17,6 +17,12 @@ export const sideNavigationConfig: TSideNavigationConfig[] = [
         icon: <AlexIcon iconName={EIconToNameMap.manageAccounts}/>,
     },
 
+    {
+        path: `customization/externalServices/${EPageType.table}`,
+        name: 'Настройка внешних сервисов',
+        icon: <AlexIcon iconName={EIconToNameMap.link}/>,
+    },
+
     // {
     //     path: `customization/tags/${EPageType.table}`,
     //     name: 'Настройка тегов',
