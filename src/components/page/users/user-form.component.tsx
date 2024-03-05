@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useLayoutEffect } from 'react'
+import React, { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { Box, CircularProgress, Grid } from '@mui/material'
 import { useFormContext } from 'react-hook-form'
 import { theme } from '../../theme/theme'
@@ -15,19 +15,22 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import {
     ERole,
     TUserCreateInput,
-    TUserUpdateInput,
+    TUserUpdatePayloadInput,
     UserCardGetUserRecordDocument,
     UserCardGetUserRecordQuery,
     UserCardGetUserRecordQueryVariables,
     UserFormCreateUserDocument,
-    UserFormCreateUserMutation, UserFormCreateUserMutationVariables,
+    UserFormCreateUserMutation,
+    UserFormCreateUserMutationVariables,
     UserFormUpdateUserDocument,
     UserFormUpdateUserMutation,
+    UserFormUpdateUserMutationVariables, UsersTableGetUserListDocument,
 } from '../../../types/graphql/graphql.ts'
 import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
 import { validEmail, validPassword } from '../../../shared-react-components/form-utils/Regex/regex.ts'
 import { AlexSelect } from '../../../shared-react-components/form-utils/AlexSelect/AlexSelect.tsx'
+import { updatedDiff } from 'deep-object-diff'
 
 interface IUserFormProps {
     setOnSubmitFunc: React.Dispatch<React.SetStateAction<{ callback: ((data: any) => void) | null }>>
@@ -44,17 +47,28 @@ export const UserForm: FC<IUserFormProps> = ({
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
-    const [updateUserMutation] = useMutation<UserFormUpdateUserMutation>(UserFormUpdateUserDocument)
+    const [updateUserMutation] = useMutation<UserFormUpdateUserMutation>(UserFormUpdateUserDocument, {
+        refetchQueries: [
+            UsersTableGetUserListDocument,
+            UserCardGetUserRecordDocument,
+        ],
+    })
 
-    const [createUserMutation] = useMutation<UserFormCreateUserMutation>(UserFormCreateUserDocument)
+    const [createUserMutation] = useMutation<UserFormCreateUserMutation>(UserFormCreateUserDocument, {
+        refetchQueries: [
+            UsersTableGetUserListDocument,
+            UserCardGetUserRecordDocument,
+        ],
+    })
 
     const [lazyGetUserRecord, {
         data: getUserRecordQueryData,
         loading: getUserRecordQueryLoading,
     }] = useLazyQuery<UserCardGetUserRecordQuery>(UserCardGetUserRecordDocument)
 
+    const id = useMemo(() => searchParams.get('id'), [searchParams])
+
     useEffect(() => {
-        const id = searchParams.get('id')
         if (id && edit) {
             lazyGetUserRecord({
                 variables: {
@@ -62,31 +76,45 @@ export const UserForm: FC<IUserFormProps> = ({
                         id: id,
                     },
                 } as UserCardGetUserRecordQueryVariables,
-            }).then((response) => {
-                reset(response.data?.user.record)
             })
         }
-    }, [searchParams, edit])
+    }, [id])
 
-    const update = (data: TUserUpdateInput) => {
+    useEffect(() => {
+        if (getUserRecordQueryData) {
+            savedData.current = getUserRecordQueryData.user.record
+            reset({
+                email: getUserRecordQueryData.user.record.email,
+                role: getUserRecordQueryData.user.record.role,
+                externalRoles: getUserRecordQueryData.user.record.externalRoles,
+                externalServices: getUserRecordQueryData.user.record.externalServices,
+                verified: getUserRecordQueryData.user.record.verified,
+            })
+        }
+    }, [getUserRecordQueryData])
+
+    const savedData = useRef<UserCardGetUserRecordQuery['user']['record'] | null>(null)
+
+    const update = (data: TUserUpdatePayloadInput) => {
         DEBUG && console.log('data UPDATE', data)
-        // updateEvent({
-        //     id: searchParams.get('id')!,
-        //     body: {
-        //         ...(data.eventDate && { eventDate: data.eventDate }),
-        //         ...(data.eventDesc && { eventDesc: data.eventDesc }),
-        //         ...(data.eventName && { eventName: data.eventName }),
-        //         ...((data.eventCompletion == false || data.eventCompletion) && { eventCompletion: data.eventCompletion }),
-        //         ...(data.tags && { tags: data.tags.map((item: any) => item.id) }),
-        //     },
-        // })
-        //     .then(() => {
-        //         if (searchParams.get('from')) {
-        //             navigate(JSON.parse(searchParams.get('from')!))
-        //         } else {
-        //             navigate('./../table')
-        //         }
-        //     })
+        DEBUG && console.log('data UPDATE initial', savedData.current)
+        DEBUG && console.log('data UPDATE diff', updatedDiff(savedData.current!, data))
+        updateUserMutation({
+            variables: {
+                input: {
+                    id: id,
+                    payload: updatedDiff(savedData.current!, data),
+                },
+            } as UserFormUpdateUserMutationVariables,
+        })
+            .then((response) => {
+                console.log('promise response', response)
+                if (searchParams.get('from')) {
+                    navigate(JSON.parse(searchParams.get('from')!))
+                } else {
+                    navigate('./../table')
+                }
+            })
     }
 
     const add = (data: TUserCreateInput) => {
@@ -161,7 +189,7 @@ export const UserForm: FC<IUserFormProps> = ({
                                                              autoFocus
                                                              errorText={errors.email?.message as string | undefined}
                                                              validateFunctions={{
-                                                                 regex: (valueToCheck: string) => (validEmail.test(valueToCheck)) || 'Некорректный формат почты',
+                                                                 regex: (valueToCheck: string) => (validEmail.test(valueToCheck) || !valueToCheck.length) || 'Некорректный формат почты',
                                                              }}/>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -171,7 +199,7 @@ export const UserForm: FC<IUserFormProps> = ({
                                                              error={Boolean(errors.password)}
                                                              errorText={errors.password?.message as string | undefined}
                                                              validateFunctions={{
-                                                                 regex: (valueToCheck: string) => (validPassword.test(valueToCheck)) || '8 символов, заглавная и строчная буква',
+                                                                 regex: (valueToCheck: string) => (validPassword.test(valueToCheck) || !valueToCheck.length) || '8 символов, заглавная и строчная буква',
                                                              }}
                                         />
                                     </Grid>

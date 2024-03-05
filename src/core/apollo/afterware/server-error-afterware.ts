@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { toastSettings } from '../../../shared-react-components/AlexToastProvider/AlexToastProvider.tsx'
 const formatMessage = (message:any):string => {
     if (Array.isArray(message)) {
-        return message.reduce((res, item) => res + `${item}\n`)
+        return message.reduce((res, item) => res + `\n${item}`)
     }
     return message
 }

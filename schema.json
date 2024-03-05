@@ -233,6 +233,55 @@
         "specifiedByUrl": null,
         "fields": [
           {
+            "name": "sendConfirmationEmail",
+            "description": "sends email to user to make account verified",
+            "args": [
+              {
+                "name": "input",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TIdInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sendConfirmationEmailMe",
+            "description": "sends email to you to verify",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "signUp",
             "description": "Provides functionality of sign up to system.",
             "args": [
@@ -268,6 +317,17 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "specifiedByUrl": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -311,22 +371,6 @@
             "deprecationReason": null
           },
           {
-            "name": "sendConfirmationEmail",
-            "description": "sends email to user to make account verified",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "signIn",
             "description": "Provides functionality of sign in to system.",
             "args": [
@@ -362,17 +406,6 @@
         ],
         "inputFields": null,
         "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
-        "specifiedByUrl": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -2068,7 +2101,7 @@
           },
           {
             "name": "accessTokenTTL",
-            "description": "Date, when access token will expire",
+            "description": "Timestamp, when access token will expire in UTC",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2100,7 +2133,7 @@
           },
           {
             "name": "refreshTokenTTL",
-            "description": "Date, when refresh token will expire",
+            "description": "Timestamp, when refresh token will expire in UTC",
             "args": [],
             "type": {
               "kind": "NON_NULL",

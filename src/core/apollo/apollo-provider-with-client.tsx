@@ -15,7 +15,7 @@ const httpLink = createHttpLink({
 })
 
 const authLink = setContext((_, { headers }) => {
-    if (getTokensAndExpiry().accessExpiry! < Date.now().toString() && getTokensAndExpiry().accessExpiry) {
+    if (parseInt(getTokensAndExpiry().accessExpiry!) < Date.parse(new Date().toUTCString())) {
         defaultClient.query({
             query: ApolloGetAuthRefreshDocument,
             variables: {
@@ -45,14 +45,6 @@ const defaultClient = new ApolloClient({
             httpLink,
         ),
     ),
-    defaultOptions: {
-        query: {
-            fetchPolicy: 'no-cache',
-        },
-        mutate: {
-            fetchPolicy: 'no-cache',
-        },
-    },
 })
 
 interface IApolloProviderWithClientProps {

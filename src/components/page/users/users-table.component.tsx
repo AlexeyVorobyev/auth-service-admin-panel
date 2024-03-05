@@ -9,6 +9,7 @@ import { UsersTableColumns } from './columns.data.tsx'
 import { varsBehaviourMapUsers } from './vars-behaviour-map-users.adapter.ts'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
+    UserCardGetUserRecordDocument,
     UsersTableDeleteUserByIdDocument,
     UsersTableDeleteUserByIdMutation,
     UsersTableGetUserListDocument,
@@ -31,7 +32,13 @@ export const UsersTable: FC = () => {
     const [lazyGetUserListQuery, {
         data: getUserListQueryData,
     }] = useLazyQuery<UsersTableGetUserListQuery>(UsersTableGetUserListDocument)
-    const [deleteUserByIdMutation] = useMutation<UsersTableDeleteUserByIdMutation>(UsersTableDeleteUserByIdDocument)
+
+    const [deleteUserByIdMutation] = useMutation<UsersTableDeleteUserByIdMutation>(UsersTableDeleteUserByIdDocument, {
+        refetchQueries: [
+            UsersTableGetUserListDocument,
+            UserCardGetUserRecordDocument,
+        ],
+    })
 
     const {
         variables: userListInput,
@@ -75,7 +82,7 @@ export const UsersTable: FC = () => {
                        filterListIds={[
                            'periodCreate',
                            'periodUpdate',
-                           'userRole'
+                           'userRole',
                        ]}
                        serverSideOptions={serverSideOptions}
                        setServerSideOptions={setServerSideOptions}

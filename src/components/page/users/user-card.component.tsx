@@ -107,7 +107,7 @@ export const UserCard: FC = () => {
                                         ))}
                                     </Stack>
                                 ) : (
-                                    <Typography variant={'subtitle1'}>Пользователь не подключён ни к одному внешнему сервису</Typography>
+                                    <Typography variant={'subtitle1'} height={'1000px'}>Пользователь не подключён ни к одному внешнему сервису</Typography>
                                 )}
                             </>),
                         },
