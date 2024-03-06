@@ -21,6 +21,8 @@ import {
 } from '../../../shared-react-components/functions/useAlexPageState/useAlexPageState.tsx'
 import { varsBehaviourMapUsers } from '../users/vars-behaviour-map-users.adapter.ts'
 import { useLocation } from 'react-router-dom'
+import { varsBehaviourMapExternalServices } from './vars-behaviour-map-external-services.adapter.ts'
+import { EPageType } from '../customization/customization-page.component.tsx'
 
 enum EExternalServicesTableStoredParams {
     page = 'page',
@@ -44,7 +46,7 @@ export const ExternalServicesTable: FC = () => {
         storedOptions: serverSideOptions,
         setStoredOptions: setServerSideOptions,
     } = useAlexPageState({
-        varsBehaviorMap: varsBehaviourMapUsers,
+        varsBehaviorMap: varsBehaviourMapExternalServices,
         modeWrite: [
             EUsePageStateMode.localStorage,
             EUsePageStateMode.queryString,
@@ -85,20 +87,20 @@ export const ExternalServicesTable: FC = () => {
                        serverSideOptions={serverSideOptions}
                        setServerSideOptions={setServerSideOptions}
                        actionsConfig={{
-                           // view: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.view}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
-                           // edit: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.edit}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
+                           view: {
+                               columnName: 'id',
+                               path: `./../${EPageType.view}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
+                           edit: {
+                               columnName: 'id',
+                               path: `./../${EPageType.edit}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
                            delete: {
                                columnName: 'id',
                                mutation: deleteExternalServiceByIdMutation,

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { routesList } from './components/router/routesList.tsx'
+import { routesListConfig } from './components/config/routes-list-config.data.tsx'
 import { AlexRouter } from './shared-react-components/AlexRouter/AlexRouter.tsx'
 import { SkeletonWrapper } from './components/skeleton/skeleton-wrapper.component.tsx'
 import { useLoginStatus } from './components/hook/use-login-status.hook.tsx'
@@ -11,7 +11,7 @@ export const LoginShell: FC = () => {
     return (<>
         {loginStatus ? (
             <SkeletonWrapper>
-                <AlexRouter routesList={routesList}/>
+                <AlexRouter routesList={routesListConfig}/>
             </SkeletonWrapper>
         ) : (
             <TokenProcessorPage/>

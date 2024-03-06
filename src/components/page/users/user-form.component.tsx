@@ -24,13 +24,21 @@ import {
     UserFormCreateUserMutationVariables,
     UserFormUpdateUserDocument,
     UserFormUpdateUserMutation,
-    UserFormUpdateUserMutationVariables, ExternalServicesTableGetExternalServiceListDocument,
+    UserFormUpdateUserMutationVariables,
+    ExternalServicesTableGetExternalServiceListDocument,
+    UsersTableGetUserListDocument,
+    UserFormGetExternalServiceListForAutocompleteQuery,
+    UserFormGetExternalServiceListForAutocompleteDocument,
 } from '../../../types/graphql/graphql.ts'
 import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
 import { validEmail, validPassword } from '../../../shared-react-components/form-utils/Regex/regex.ts'
 import { AlexSelect } from '../../../shared-react-components/form-utils/AlexSelect/AlexSelect.tsx'
-import { updatedDiff } from 'deep-object-diff'
+import { addedDiff, diff, updatedDiff } from 'deep-object-diff'
+import {
+    AlexAutocompleteControlled,
+} from '../../../shared-react-components/form-utils/alex-autocomplete/alex-autocomplete-controlled.component.tsx'
+import { alexDiff } from '../../function/alex-diff.function.ts'
 
 interface IUserFormProps {
     setOnSubmitFunc: React.Dispatch<React.SetStateAction<{ callback: ((data: any) => void) | null }>>
@@ -49,22 +57,25 @@ export const UserForm: FC<IUserFormProps> = ({
 
     const [updateUserMutation] = useMutation<UserFormUpdateUserMutation>(UserFormUpdateUserDocument, {
         refetchQueries: [
-            ExternalServicesTableGetExternalServiceListDocument,
-            UserCardGetUserRecordDocument,
+            { query: UsersTableGetUserListDocument },
         ],
     })
 
     const [createUserMutation] = useMutation<UserFormCreateUserMutation>(UserFormCreateUserDocument, {
         refetchQueries: [
-            ExternalServicesTableGetExternalServiceListDocument,
-            UserCardGetUserRecordDocument,
+            { query: UsersTableGetUserListDocument },
         ],
     })
 
     const [lazyGetUserRecord, {
-        data: getUserRecordQueryData,
-        loading: getUserRecordQueryLoading,
+        data: userRecordQueryData,
+        loading: userRecordQueryLoading,
     }] = useLazyQuery<UserCardGetUserRecordQuery>(UserCardGetUserRecordDocument)
+
+    const [lazyGetExternalServiceList, {
+        data: externalServiceListQueryData,
+        loading: externalServiceListLoadingData,
+    }] = useLazyQuery<UserFormGetExternalServiceListForAutocompleteQuery>(UserFormGetExternalServiceListForAutocompleteDocument)
 
     const id = useMemo(() => searchParams.get('id'), [searchParams])
 
@@ -81,29 +92,47 @@ export const UserForm: FC<IUserFormProps> = ({
     }, [id])
 
     useEffect(() => {
-        if (getUserRecordQueryData) {
-            savedData.current = getUserRecordQueryData.user.record
-            reset({
-                email: getUserRecordQueryData.user.record.email,
-                role: getUserRecordQueryData.user.record.role,
-                externalRoles: getUserRecordQueryData.user.record.externalRoles,
-                externalServices: getUserRecordQueryData.user.record.externalServices,
-                verified: getUserRecordQueryData.user.record.verified,
-            })
-        }
-    }, [getUserRecordQueryData])
+        lazyGetExternalServiceList()
+    }, [])
 
-    const savedData = useRef<UserCardGetUserRecordQuery['user']['record'] | null>(null)
+    useEffect(() => {
+        if (userRecordQueryData) {
+            const refinedData = {
+                email: userRecordQueryData.user.record.email,
+                role: userRecordQueryData.user.record.role,
+                externalRolesId: userRecordQueryData.user.record.externalRoles
+                    .map((item) => item.id),
+                externalServicesId: userRecordQueryData.user.record.externalServices
+                    .map((item) => item.id),
+                verified: userRecordQueryData.user.record.verified,
+                password: undefined
+            }
+            savedData.current = refinedData
+            reset(refinedData)
+        }
+    }, [userRecordQueryData])
+
+    const savedData = useRef<any>(null)
+
+    const externalServicesData = useMemo(() => (
+        externalServiceListQueryData?.externalService.list.data
+            .map((item) => (
+                {
+                    id: item.id,
+                    title: item.name,
+                }
+            ))
+    ), [externalServiceListQueryData])
 
     const update = (data: TUserUpdatePayloadInput) => {
         DEBUG && console.log('data UPDATE', data)
         DEBUG && console.log('data UPDATE initial', savedData.current)
-        DEBUG && console.log('data UPDATE diff', updatedDiff(savedData.current!, data))
+        DEBUG && console.log('data UPDATE diff', alexDiff(savedData.current!, data))
         updateUserMutation({
             variables: {
                 input: {
                     id: id,
-                    payload: updatedDiff(savedData.current!, data),
+                    payload: alexDiff(savedData.current!, data),
                 },
             } as UserFormUpdateUserMutationVariables,
         })
@@ -158,7 +187,7 @@ export const UserForm: FC<IUserFormProps> = ({
             flex: 1,
             overflowY: 'scroll',
         }}>
-            {getUserRecordQueryLoading && (
+            {userRecordQueryLoading && (
                 <Box sx={{
                     width: '100%',
                     height: '100%',
@@ -169,7 +198,7 @@ export const UserForm: FC<IUserFormProps> = ({
                     <CircularProgress/>
                 </Box>
             )}
-            {!getUserRecordQueryLoading && (
+            {!userRecordQueryLoading && (
                 <Box sx={{
                     width: '100%',
                     padding: theme.spacing(2),
@@ -189,7 +218,7 @@ export const UserForm: FC<IUserFormProps> = ({
                                                              autoFocus
                                                              errorText={errors.email?.message as string | undefined}
                                                              validateFunctions={{
-                                                                 regex: (valueToCheck: string) => (validEmail.test(valueToCheck) || !valueToCheck.length) || 'Некорректный формат почты',
+                                                                 regex: (valueToCheck: string) => (validEmail.test(valueToCheck) || !valueToCheck?.length) || 'Некорректный формат почты',
                                                              }}/>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -199,11 +228,11 @@ export const UserForm: FC<IUserFormProps> = ({
                                                              error={Boolean(errors.password)}
                                                              errorText={errors.password?.message as string | undefined}
                                                              validateFunctions={{
-                                                                 regex: (valueToCheck: string) => (validPassword.test(valueToCheck) || !valueToCheck.length) || '8 символов, заглавная и строчная буква',
+                                                                 regex: (valueToCheck: string) => (validPassword.test(valueToCheck) || !valueToCheck?.length) || '8 символов, заглавная и строчная буква',
                                                              }}
                                         />
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12}>
                                         <AlexSelect name={'role'} required
                                                     error={Boolean(errors.role)}
                                                     label={'Роль сервиса авторизации'}
@@ -219,6 +248,7 @@ export const UserForm: FC<IUserFormProps> = ({
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexCheckBoxControlled name={'verified'} size={30}
+                                                                justifyContent={'start'}
                                                                 label={'Пользователь подтверждён'}
                                                                 color={{
                                                                     outline: theme.palette.grey['800'],
@@ -231,8 +261,15 @@ export const UserForm: FC<IUserFormProps> = ({
                         {
                             name: 'externalServices',
                             title: 'Внешние сервисы',
-                            body: (<>
-                            </>),
+                            body: (
+                                <Grid container spacing={theme.spacing(2)}>
+                                    <Grid item xs={12}>
+                                        <AlexAutocompleteControlled name={'externalServicesId'} multiple
+                                                                    label={'Внешние сервисы'}
+                                                                    options={externalServicesData || []}/>
+                                    </Grid>
+                                </Grid>
+                            ),
                         },
                         {
                             name: 'externalRoles',

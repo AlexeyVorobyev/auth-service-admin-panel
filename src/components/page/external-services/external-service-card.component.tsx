@@ -5,36 +5,35 @@ import { theme } from '../../theme/theme'
 import { AlexDataView } from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView'
 import { useLazyQuery } from '@apollo/client'
 import {
-    UserCardGetUserRecordDocument,
-    UserCardGetUserRecordQuery,
-    UserCardGetUserRecordQueryVariables,
+    ExternalServiceCardGetExternalServiceRecordDocument,
+    ExternalServiceCardGetExternalServiceRecordQuery,
+    ExternalServiceCardGetExternalServiceRecordQueryVariables,
 } from '../../../types/graphql/graphql.ts'
 import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
 import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
-import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
 
-export const UserCard: FC = () => {
+export const ExternalServiceCard: FC = () => {
     const [searchParams] = useSearchParams()
 
-    const [lazyGetUserRecord, {
-        data: userRecordQueryData,
-        loading: userRecordQueryLoading,
-    }] = useLazyQuery<UserCardGetUserRecordQuery>(UserCardGetUserRecordDocument)
+    const [lazyGetExternalServiceRecord, {
+        data: externalServiceRecordQueryData,
+        loading: externalServiceRecordQueryLoading,
+    }] = useLazyQuery<ExternalServiceCardGetExternalServiceRecordQuery>(ExternalServiceCardGetExternalServiceRecordDocument)
 
     useEffect(() => {
         const id = searchParams.get('id')
         if (id) {
-            lazyGetUserRecord({
+            lazyGetExternalServiceRecord({
                 variables: {
                     input: {
                         id: id,
                     },
-                } as UserCardGetUserRecordQueryVariables,
+                } as ExternalServiceCardGetExternalServiceRecordQueryVariables,
             })
         }
     }, [searchParams])
 
-    const userData = useMemo(() => userRecordQueryData?.user.record, [userRecordQueryData])
+    const externalServiceData = useMemo(() => externalServiceRecordQueryData?.externalService.record, [externalServiceRecordQueryData])
 
     return (
         <Box sx={{
@@ -43,7 +42,7 @@ export const UserCard: FC = () => {
             flex: 1,
             overflowY: 'scroll',
         }}>
-            {userRecordQueryLoading && (
+            {externalServiceRecordQueryLoading && (
                 <Box sx={{
                     width: '100%',
                     height: '100%',
@@ -54,7 +53,7 @@ export const UserCard: FC = () => {
                     <CircularProgress/>
                 </Box>
             )}
-            {(!userRecordQueryLoading && userData) && (
+            {(!externalServiceRecordQueryLoading && externalServiceData) && (
                 <Box sx={{
                     width: '100%',
                     padding: theme.spacing(2),
@@ -68,61 +67,57 @@ export const UserCard: FC = () => {
                                 <Grid container spacing={theme.spacing(2)}>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'ID'}>
-                                            {userData.id}
+                                            {externalServiceData.id}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <AlexDataView label={'Почта'}>
-                                            {userData.email}
-                                        </AlexDataView>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <AlexDataView label={'Роль сервиса авторизации'}>
-                                            <Box>
-                                                <AlexChip label={EERoleToRusName[userData.role]} sx={{ width: '100px' }}/>
-                                            </Box>
+                                        <AlexDataView label={'Название'}>
+                                            {externalServiceData.name}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Дата создания'}>
-                                            {userData.createdAt}
+                                            {externalServiceData.createdAt}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Дата последнего изменения'}>
-                                            {userData.updatedAt}
+                                            {externalServiceData.updatedAt}
+                                        </AlexDataView>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <AlexDataView label={'Дата последнего изменения'}>
+                                            {externalServiceData.description}
                                         </AlexDataView>
                                     </Grid>
                                 </Grid>
                             ),
                         },
                         {
-                            name: 'externalServices',
-                            title: 'Внешние сервисы',
-                            body: (<>
-                                {userData.externalServices.length ? (
-                                    <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {userData.externalServices.map((item) => (
-                                            <AlexChip label={`${item.name}`} key={item.id}/>
-                                        ))}
-                                    </Stack>
-                                ) : (
-                                    <Typography variant={'subtitle1'} height={'1000px'}>Пользователь не подключён ни к одному внешнему сервису</Typography>
-                                )}
-                            </>),
+                            name: 'exchangeData',
+                            title: 'Параметры обмена',
+                            body: (
+                                <Grid container spacing={theme.spacing(2)}>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'Ключ распознавания'}>
+                                            {externalServiceData.recognitionKey}
+                                        </AlexDataView>
+                                    </Grid>
+                                </Grid>
+                            )
                         },
                         {
                             name: 'externalRoles',
                             title: 'Роли во внешних сервисах',
                             body: (<>
-                                {userData.externalServices.length ? (
+                                {externalServiceData.externalRoles.length ? (
                                     <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {userData.externalRoles.map((item) => (
-                                            <AlexChip label={`${item.externalService.name}:${item.name}`} key={item.id}/>
+                                        {externalServiceData.externalRoles.map((item) => (
+                                            <AlexChip label={item.name} key={item.id}/>
                                         ))}
                                     </Stack>
                                 ) : (
-                                    <Typography variant={'subtitle1'}>Пользователь не имеет ролей во внешних сервисах</Typography>
+                                    <Typography variant={'subtitle1'}>Сервис не имеет ролей</Typography>
                                 )}
                             </>),
                         },

@@ -3,6 +3,9 @@ query ExternalServicesTableGetExternalServiceList ($input: TExternalServiceListI
         list (input: $input) {
             data {
                 id
+                name
+                description
+                recognitionKey
                 createdAt
                 updatedAt
                 externalRoles {
