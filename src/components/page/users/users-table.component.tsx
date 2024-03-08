@@ -9,9 +9,9 @@ import { UsersTableColumns } from './columns.data.tsx'
 import { varsBehaviourMapUsers } from './vars-behaviour-map-users.adapter.ts'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
-    UserCardGetUserRecordDocument,
     UsersTableDeleteUserByIdDocument,
-    UsersTableDeleteUserByIdMutation, UsersTableGetUserListDocument,
+    UsersTableDeleteUserByIdMutation,
+    UsersTableGetUserListDocument,
     UsersTableGetUserListQuery,
     UsersTableGetUserListQueryVariables,
 } from '../../../types/graphql/graphql.ts'
@@ -34,8 +34,7 @@ export const UsersTable: FC = () => {
 
     const [deleteUserByIdMutation] = useMutation<UsersTableDeleteUserByIdMutation>(UsersTableDeleteUserByIdDocument, {
         refetchQueries: [
-            UsersTableGetUserListDocument,
-            UserCardGetUserRecordDocument,
+            { query: UsersTableGetUserListDocument },
         ],
     })
 

@@ -61,32 +61,17 @@ export const ExternalServiceCard: FC = () => {
                 }}>
                     <AlexContentProvider pointConfig={[
                         {
-                            name: 'main',
+                            name: 'mainCardExternalService',
                             title: 'Основная информация',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>
-                                    <Grid item xs={6}>
-                                        <AlexDataView label={'ID'}>
-                                            {externalServiceData.id}
-                                        </AlexDataView>
-                                    </Grid>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Название'}>
                                             {externalServiceData.name}
                                         </AlexDataView>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <AlexDataView label={'Дата создания'}>
-                                            {externalServiceData.createdAt}
-                                        </AlexDataView>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <AlexDataView label={'Дата последнего изменения'}>
-                                            {externalServiceData.updatedAt}
-                                        </AlexDataView>
-                                    </Grid>
                                     <Grid item xs={12}>
-                                        <AlexDataView label={'Дата последнего изменения'}>
+                                        <AlexDataView label={'Описание'}>
                                             {externalServiceData.description}
                                         </AlexDataView>
                                     </Grid>
@@ -94,7 +79,7 @@ export const ExternalServiceCard: FC = () => {
                             ),
                         },
                         {
-                            name: 'exchangeData',
+                            name: 'exchangeDataCardExternalService',
                             title: 'Параметры обмена',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>
@@ -107,8 +92,8 @@ export const ExternalServiceCard: FC = () => {
                             )
                         },
                         {
-                            name: 'externalRoles',
-                            title: 'Роли во внешних сервисах',
+                            name: 'externalRolesCardExternalService',
+                            title: 'Роли',
                             body: (<>
                                 {externalServiceData.externalRoles.length ? (
                                     <Stack direction={'row'} spacing={theme.spacing(1)}>
@@ -120,6 +105,29 @@ export const ExternalServiceCard: FC = () => {
                                     <Typography variant={'subtitle1'}>Сервис не имеет ролей</Typography>
                                 )}
                             </>),
+                        },
+                        {
+                            name: 'internalCardExternalService',
+                            title: 'Служебная информация',
+                            body: (
+                                <Grid container spacing={theme.spacing(2)}>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'ID'}>
+                                            {externalServiceData.id}
+                                        </AlexDataView>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'Дата создания'}>
+                                            {externalServiceData.createdAt}
+                                        </AlexDataView>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'Дата последнего изменения'}>
+                                            {externalServiceData.updatedAt}
+                                        </AlexDataView>
+                                    </Grid>
+                                </Grid>
+                            ),
                         },
                     ]}/>
                 </Box>)}

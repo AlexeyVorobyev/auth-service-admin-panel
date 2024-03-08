@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material'
+import { Box, CircularProgress, Grid, Paper, Stack, Typography } from '@mui/material'
 import { theme } from '../../theme/theme'
 import { AlexDataView } from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView'
 import { useLazyQuery } from '@apollo/client'
@@ -62,15 +62,10 @@ export const UserCard: FC = () => {
                 }}>
                     <AlexContentProvider pointConfig={[
                         {
-                            name: 'main',
+                            name: 'mainCardUser',
                             title: 'Основная информация',
                             body: (
-                                <Grid container spacing={theme.spacing(2)}>
-                                    <Grid item xs={6}>
-                                        <AlexDataView label={'ID'}>
-                                            {userData.id}
-                                        </AlexDataView>
-                                    </Grid>
+                                <Grid container rowGap={theme.spacing(2)} columnSpacing={theme.spacing(2)}>
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Почта'}>
                                             {userData.email}
@@ -79,8 +74,55 @@ export const UserCard: FC = () => {
                                     <Grid item xs={6}>
                                         <AlexDataView label={'Роль сервиса авторизации'}>
                                             <Box>
-                                                <AlexChip label={EERoleToRusName[userData.role]} sx={{ width: '100px' }}/>
+                                                <AlexChip label={EERoleToRusName[userData.role]}
+                                                          sx={{ width: '100px' }}/>
                                             </Box>
+                                        </AlexDataView>
+                                    </Grid>
+                                </Grid>
+                            ),
+                        },
+                        {
+                            name: 'externalServicesCardUser',
+                            title: 'Внешние сервисы',
+                            body: (<>
+                                {userData.externalServices.length ? (
+                                    <Stack direction={'row'} spacing={theme.spacing(1)}>
+                                        {userData.externalServices.map((item) => (
+                                            <AlexChip label={`${item.name}`} key={item.id}/>
+                                        ))}
+                                    </Stack>
+                                ) : (
+                                    <Typography variant={'subtitle1'}>Пользователь не подключён ни к одному внешнему
+                                        сервису</Typography>
+                                )}
+                            </>),
+                        },
+                        {
+                            name: 'externalRolesCardUser',
+                            title: 'Роли во внешних сервисах',
+                            body: (<>
+                                {userData.externalServices.length ? (
+                                    <Stack direction={'row'} spacing={theme.spacing(1)}>
+                                        {userData.externalRoles.map((item) => (
+                                            <AlexChip label={`${item.externalService.name}:${item.name}`}
+                                                      key={item.id}/>
+                                        ))}
+                                    </Stack>
+                                ) : (
+                                    <Typography variant={'subtitle1'}>Пользователь не имеет ролей во внешних
+                                        сервисах</Typography>
+                                )}
+                            </>),
+                        },
+                        {
+                            name: 'internalCardUser',
+                            title: 'Служебная информация',
+                            body: (
+                                <Grid container spacing={theme.spacing(2)}>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'ID'}>
+                                            {userData.id}
                                         </AlexDataView>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -96,38 +138,9 @@ export const UserCard: FC = () => {
                                 </Grid>
                             ),
                         },
-                        {
-                            name: 'externalServices',
-                            title: 'Внешние сервисы',
-                            body: (<>
-                                {userData.externalServices.length ? (
-                                    <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {userData.externalServices.map((item) => (
-                                            <AlexChip label={`${item.name}`} key={item.id}/>
-                                        ))}
-                                    </Stack>
-                                ) : (
-                                    <Typography variant={'subtitle1'} height={'1000px'}>Пользователь не подключён ни к одному внешнему сервису</Typography>
-                                )}
-                            </>),
-                        },
-                        {
-                            name: 'externalRoles',
-                            title: 'Роли во внешних сервисах',
-                            body: (<>
-                                {userData.externalServices.length ? (
-                                    <Stack direction={'row'} spacing={theme.spacing(1)}>
-                                        {userData.externalRoles.map((item) => (
-                                            <AlexChip label={`${item.externalService.name}:${item.name}`} key={item.id}/>
-                                        ))}
-                                    </Stack>
-                                ) : (
-                                    <Typography variant={'subtitle1'}>Пользователь не имеет ролей во внешних сервисах</Typography>
-                                )}
-                            </>),
-                        },
                     ]}/>
-                </Box>)}
+                </Box>
+            )}
         </Box>
     )
 }

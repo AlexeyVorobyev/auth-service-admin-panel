@@ -1,0 +1,23 @@
+query ExternalRolesTableGetExternalRoleList ($input: TExternalRoleListInput) {
+    externalRole {
+        list (input: $input) {
+            data {
+                id
+                name
+                description
+                recognitionKey
+                createdAt
+                updatedAt
+                externalService {
+                    name
+                }
+            }
+            meta {
+                currentPage
+                elementsPerPage
+                totalElements
+                totalPages
+            }
+        }
+    }
+}

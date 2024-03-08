@@ -75,6 +75,32 @@ export const routesListConfig: TRoute[] = [
         name: 'Добавление внешнего сервиса',
         component: <CustomizationPage config={customizationPageConfig}/>,
     },
+
+    {
+        path: `customization/externalRoles`,
+        name: 'Внешние роли',
+        component: <Navigate to={`/customization/externalRoles/${EPageType.table}`}/>,
+    },
+    {
+        path: `customization/externalRoles/${EPageType.table}`,
+        name: 'Таблица внешних ролей',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
+    {
+        path: `customization/externalRoles/${EPageType.view}`,
+        name: 'Внешняя роль',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
+    {
+        path: `customization/externalRoles/${EPageType.edit}`,
+        name: 'Настройка внешних ролей',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
+    {
+        path: `customization/externalRoles/${EPageType.add}`,
+        name: 'Добавление внешней роли',
+        component: <CustomizationPage config={customizationPageConfig}/>,
+    },
 ]
 
 const mapRoutesListPaths = (routesList: TRoute[]): string[] => {

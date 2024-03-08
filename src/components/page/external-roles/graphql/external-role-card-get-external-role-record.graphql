@@ -1,0 +1,15 @@
+query ExternalRoleCardGetExternalRoleRecord ($input: TIdInput!) {
+    externalRole {
+        record(idInput: $input) {
+            id
+            createdAt
+            updatedAt
+            name
+            description
+            recognitionKey
+            externalService {
+                name
+            }
+        }
+    }
+}

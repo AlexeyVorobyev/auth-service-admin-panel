@@ -184,7 +184,7 @@ export const ExternalServiceForm: FC<IExternalServiceFormProps> = ({
                 }}>
                     <AlexContentProvider pointConfig={[
                         {
-                            name: 'main',
+                            name: 'mainFormExternalService',
                             title: 'Основная информация',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>
@@ -205,7 +205,7 @@ export const ExternalServiceForm: FC<IExternalServiceFormProps> = ({
                             ),
                         },
                         {
-                            name: 'exchangeParams',
+                            name: 'exchangeParamsFormExternalService',
                             title: 'Параметры обмена',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>

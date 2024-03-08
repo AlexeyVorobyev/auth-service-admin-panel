@@ -207,7 +207,7 @@ export const UserForm: FC<IUserFormProps> = ({
                 }}>
                     <AlexContentProvider pointConfig={[
                         {
-                            name: 'main',
+                            name: 'mainFormUser',
                             title: 'Основная информация',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>
@@ -259,7 +259,7 @@ export const UserForm: FC<IUserFormProps> = ({
                             ),
                         },
                         {
-                            name: 'externalServices',
+                            name: 'externalServicesFormUser',
                             title: 'Внешние сервисы',
                             body: (
                                 <Grid container spacing={theme.spacing(2)}>
@@ -272,7 +272,7 @@ export const UserForm: FC<IUserFormProps> = ({
                             ),
                         },
                         {
-                            name: 'externalRoles',
+                            name: 'externalRolesFormUser',
                             title: 'Роли во внешних сервисах',
                             body: (<>
                             </>),

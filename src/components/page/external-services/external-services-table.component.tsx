@@ -8,7 +8,6 @@ import { PER_PAGE_OPTIONS } from '../../../globalConstants.ts'
 import { ExternalServicesTableColumns } from './columns.data.tsx'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
-    ExternalServiceCardGetExternalServiceRecordDocument,
     ExternalServicesTableDeleteExternalServiceByIdDocument,
     ExternalServicesTableDeleteExternalServiceByIdMutation,
     ExternalServicesTableGetExternalServiceListDocument,
@@ -19,7 +18,6 @@ import {
     EUsePageStateMode,
     useAlexPageState,
 } from '../../../shared-react-components/functions/useAlexPageState/useAlexPageState.tsx'
-import { varsBehaviourMapUsers } from '../users/vars-behaviour-map-users.adapter.ts'
 import { useLocation } from 'react-router-dom'
 import { varsBehaviourMapExternalServices } from './vars-behaviour-map-external-services.adapter.ts'
 import { EPageType } from '../customization/customization-page.component.tsx'
@@ -36,8 +34,7 @@ export const ExternalServicesTable: FC = () => {
 
     const [deleteExternalServiceByIdMutation] = useMutation<ExternalServicesTableDeleteExternalServiceByIdMutation>(ExternalServicesTableDeleteExternalServiceByIdDocument, {
         refetchQueries: [
-            ExternalServicesTableGetExternalServiceListDocument,
-            ExternalServiceCardGetExternalServiceRecordDocument,
+            { query: ExternalServicesTableGetExternalServiceListDocument },
         ],
     })
 
