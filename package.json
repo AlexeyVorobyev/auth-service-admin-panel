@@ -5,8 +5,8 @@
   "type": "module",
   "homepage": "https://alexeyvorobyev.github.io/vega_admin_frontend/",
   "scripts": {
-    "start:dev": "vite",
-    "build": "tsc && vite build",
+    "start:dev": "NODE_ENV=development vite --mode development",
+    "build": "NODE_ENV=prod tsc && vite build --mode prod",
     "build-no-tsc": "vite build",
     "serve:prod": "serve -s dist",
     "download:schema:json": "apollo client:download-schema --endpoint=http://10.5.0.5/api/graphql schema.json",
@@ -33,6 +33,7 @@
     "chart.js": "^4.4.0",
     "date-fns": "^3.2.0",
     "deep-object-diff": "^1.1.9",
+    "dotenv": "^16.4.5",
     "gh-pages": "^6.0.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -47,7 +48,8 @@
     "redux-toolkit": "^1.1.2",
     "serve": "^14.2.1",
     "styled-components": "^6.1.8",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "vite-plugin-require": "^1.1.14"
   },
   "devDependencies": {
     "@types/react": "^18.2.18",
