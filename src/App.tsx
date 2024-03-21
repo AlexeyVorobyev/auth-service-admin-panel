@@ -8,18 +8,16 @@ import { LoginShell } from './LoginShell.tsx'
 import { ApolloProviderWithClient } from './core/apollo/apollo-provider-with-client.tsx'
 
 const App: FC = () => (
-    <React.StrictMode>
-        <ApolloProviderWithClient>
-            <ThemeProvider theme={theme}>
-                <GlobalStyles styles={globalStyles()}/>
-                <BrowserRouter>
-                    <AlexToastProvider>
-                        <LoginShell/>
-                    </AlexToastProvider>
-                </BrowserRouter>
-            </ThemeProvider>
-        </ApolloProviderWithClient>
-    </React.StrictMode>
+    <ApolloProviderWithClient>
+        <ThemeProvider theme={theme}>
+            <GlobalStyles styles={globalStyles()}/>
+            <BrowserRouter>
+                <AlexToastProvider>
+                    <LoginShell/>
+                </AlexToastProvider>
+            </BrowserRouter>
+        </ThemeProvider>
+    </ApolloProviderWithClient>
 )
 
 export default App
