@@ -15,6 +15,7 @@ const httpLink = createHttpLink({
 })
 
 const authLink = setContext( (_, { headers }) => {
+    console.log(parseInt(getTokensAndExpiry().accessExpiry!), Date.parse(new Date().toUTCString()))
     if (parseInt(getTokensAndExpiry().accessExpiry!) < Date.parse(new Date().toUTCString())) {
         defaultClient.query({
             query: ApolloGetAuthRefreshDocument,
