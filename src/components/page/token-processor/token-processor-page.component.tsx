@@ -28,7 +28,7 @@ export const TokenProcessorPage: FC = () => {
         },100)
     } else {
         const url = new URL(GLOBAL_CONFIG.entrypointServiceNginxAddress)
-        url.searchParams.set('redirectUrl', `${window.location.protocol}://${window.location.host}`)
+        url.searchParams.set('redirectUrl', `${window.location.protocol}//${window.location.host}`)
         window.location.replace(url)
     }
 
