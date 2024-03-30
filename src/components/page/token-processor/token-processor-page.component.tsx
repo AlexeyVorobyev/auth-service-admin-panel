@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { GLOBAL_CONFIG } from '../../../globalConfig.ts'
-import { userLogged } from '../../../core/apollo/vars.ts'
+import {FC} from 'react'
+import {useNavigate, useSearchParams} from 'react-router-dom'
+import {GLOBAL_CONFIG} from '../../../globalConfig.ts'
+import {userLogged} from '../../../core/apollo/vars.ts'
 
 export enum ETokenProcessorPageSearchParams {
     accessToken = 'accessToken',
