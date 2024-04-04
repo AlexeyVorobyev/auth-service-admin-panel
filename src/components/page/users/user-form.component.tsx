@@ -24,6 +24,8 @@ import {
     UserFormCreateUserMutationVariables,
     UserFormGetExternalServiceListForAutocompleteDocument,
     UserFormGetExternalServiceListForAutocompleteQuery,
+    UserFormGetExternalServiceListForChooseUserExternalRolesDocument,
+    UserFormGetExternalServiceListForChooseUserExternalRolesQuery,
     UserFormUpdateUserDocument,
     UserFormUpdateUserMutation,
     UserFormUpdateUserMutationVariables,
@@ -37,6 +39,9 @@ import {
     AlexAutocompleteControlled,
 } from '../../../shared-react-components/form-utils/alex-autocomplete/alex-autocomplete-controlled.component.tsx'
 import {alexDiff} from '../../function/alex-diff.function.ts'
+import {
+    ChooseUserExternalRoles, TChooseUserExternalRolesOptions, TChooseUserExternalRolesValue,
+} from '../../widgets/choose-user-external-roles/choose-user-external-roles.component.tsx'
 
 interface IUserFormProps {
     setOnSubmitFunc: React.Dispatch<React.SetStateAction<{ callback: ((data: any) => void) | null }>>
@@ -49,19 +54,19 @@ export const UserForm: FC<IUserFormProps> = ({
                                                  setOnSubmitFunc,
                                                  edit,
                                              }) => {
-    const { formState: { errors }, reset } = useFormContext()
+    const {formState: {errors}, reset} = useFormContext()
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
     const [updateUserMutation] = useMutation<UserFormUpdateUserMutation>(UserFormUpdateUserDocument, {
         refetchQueries: [
-            { query: UsersTableGetUserListDocument },
+            {query: UsersTableGetUserListDocument},
         ],
     })
 
     const [createUserMutation] = useMutation<UserFormCreateUserMutation>(UserFormCreateUserDocument, {
         refetchQueries: [
-            { query: UsersTableGetUserListDocument },
+            {query: UsersTableGetUserListDocument},
         ],
     })
 
@@ -74,6 +79,11 @@ export const UserForm: FC<IUserFormProps> = ({
         data: externalServiceListQueryData,
         loading: externalServiceListLoadingData,
     }] = useLazyQuery<UserFormGetExternalServiceListForAutocompleteQuery>(UserFormGetExternalServiceListForAutocompleteDocument)
+
+    const [lazyGetExternalServiceForChooseList, {
+        data: externalServiceListForChooseQueryData,
+        loading: externalServiceListForChooseLoadingData,
+    }] = useLazyQuery<UserFormGetExternalServiceListForChooseUserExternalRolesQuery>(UserFormGetExternalServiceListForChooseUserExternalRolesDocument)
 
     const id = useMemo(() => searchParams.get('id'), [searchParams])
 
@@ -91,6 +101,7 @@ export const UserForm: FC<IUserFormProps> = ({
 
     useEffect(() => {
         lazyGetExternalServiceList()
+        lazyGetExternalServiceForChooseList()
     }, [])
 
     useEffect(() => {
@@ -103,7 +114,13 @@ export const UserForm: FC<IUserFormProps> = ({
                 externalServicesId: userRecordQueryData.user.record.externalServices
                     .map((item) => item.id),
                 verified: userRecordQueryData.user.record.verified,
-                password: undefined
+                password: undefined,
+                userExternalRoles: userRecordQueryData.user.record.externalServices.map((item) => ({
+                    externalServiceId: item.id,
+                    externalRolesId: userRecordQueryData.user.record.externalRoles
+                        .filter((_item) => _item.externalService.id === item.id)
+                        .map((_item) => _item.id)
+                })) as TChooseUserExternalRolesValue,
             }
             savedData.current = refinedData
             reset(refinedData)
@@ -121,6 +138,17 @@ export const UserForm: FC<IUserFormProps> = ({
                 }
             ))
     ), [externalServiceListQueryData])
+
+    const externalRolesOptions: TChooseUserExternalRolesOptions[] = useMemo(() => (
+        externalServiceListForChooseQueryData?.externalService.list.data
+            .map((item) => ({
+                externalServiceId: item.id,
+                externalRoles: item.externalRoles.map((item) => ({
+                    id: item.id,
+                    title: item.name,
+                })) || [],
+            })) || []
+    ), [externalServiceListForChooseQueryData])
 
     const update = (data: TUserUpdatePayloadInput) => {
         DEBUG && console.log('data UPDATE', data)
@@ -163,6 +191,12 @@ export const UserForm: FC<IUserFormProps> = ({
 
     const onSubmit = (data: any) => {
         DEBUG && console.log('data BEFORE processing', data)
+        data.externalRolesId = [].concat(
+            ...data.userExternalRoles
+                .map((item: any) => item.externalRolesId),
+        )
+        delete data.userExternalRoles
+
         data = extractIds(data)
 
         if (edit) {
@@ -175,7 +209,7 @@ export const UserForm: FC<IUserFormProps> = ({
     }
 
     useLayoutEffect(() => {
-        setOnSubmitFunc({ callback: onSubmit })
+        setOnSubmitFunc({callback: onSubmit})
     }, [])
 
     return (
@@ -273,6 +307,15 @@ export const UserForm: FC<IUserFormProps> = ({
                             name: 'externalRolesFormUser',
                             title: 'Роли во внешних сервисах',
                             body: (<>
+                                <ChooseUserExternalRoles name={'userExternalRoles'}
+                                                         externalRolesOptions={externalRolesOptions}
+                                                         externalServiceOptions={
+                                                             userRecordQueryData?.user.record.externalServices.map((item) => ({
+                                                                 id: item.id,
+                                                                 title: item.name,
+                                                             })) || []
+                                                         }
+                                />
                             </>),
                         },
                     ]}/>

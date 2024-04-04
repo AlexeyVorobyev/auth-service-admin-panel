@@ -37,7 +37,7 @@ export const UsersTableColumns: TCustomDataTableColumn[] = [
         id: 'externalRoles',
         label: 'Роли во внешних сервисах',
         format: (value: TUserAttributes) => (
-            <Stack direction={'row'} spacing={theme.spacing(1)}>
+            <Stack direction={'column'} spacing={theme.spacing(1)} width={'fit-content'}>
                 {value.externalRoles.map((item) => (
                     <AlexChip label={`${item.externalService.name}:${item.name}`} key={item.recognitionKey}/>
                 ))}
