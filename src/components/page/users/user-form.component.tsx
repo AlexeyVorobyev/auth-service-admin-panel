@@ -1,17 +1,17 @@
-import React, { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { Box, CircularProgress, Grid } from '@mui/material'
-import { useFormContext } from 'react-hook-form'
-import { theme } from '../../theme/theme'
+import React, {FC, useEffect, useLayoutEffect, useMemo, useRef} from 'react'
+import {Box, CircularProgress, Grid} from '@mui/material'
+import {useFormContext} from 'react-hook-form'
+import {theme} from '../../theme/theme'
 import {
     AlexInputControlled,
     EInputType,
 } from '../../../shared-react-components/form-utils/AlexInput/AlexInputControlled.tsx'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { extractIds } from '../../../shared-react-components/functions/extractIds'
+import {useNavigate, useSearchParams} from 'react-router-dom'
+import {extractIds} from '../../../shared-react-components/functions/extractIds'
 import {
     AlexCheckBoxControlled,
 } from '../../../shared-react-components/form-utils/AlexCheckBox/AlexCheckBoxControlled.tsx'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import {useLazyQuery, useMutation} from '@apollo/client'
 import {
     ERole,
     TUserCreateInput,
@@ -22,23 +22,21 @@ import {
     UserFormCreateUserDocument,
     UserFormCreateUserMutation,
     UserFormCreateUserMutationVariables,
+    UserFormGetExternalServiceListForAutocompleteDocument,
+    UserFormGetExternalServiceListForAutocompleteQuery,
     UserFormUpdateUserDocument,
     UserFormUpdateUserMutation,
     UserFormUpdateUserMutationVariables,
-    ExternalServicesTableGetExternalServiceListDocument,
     UsersTableGetUserListDocument,
-    UserFormGetExternalServiceListForAutocompleteQuery,
-    UserFormGetExternalServiceListForAutocompleteDocument,
 } from '../../../types/graphql/graphql.ts'
-import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
-import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
-import { validEmail, validPassword } from '../../../shared-react-components/form-utils/Regex/regex.ts'
-import { AlexSelect } from '../../../shared-react-components/form-utils/AlexSelect/AlexSelect.tsx'
-import { addedDiff, diff, updatedDiff } from 'deep-object-diff'
+import {EERoleToRusName} from '../../enum/erole-to-rus-name.enum.ts'
+import {AlexContentProvider} from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
+import {validEmail, validPassword} from '../../../shared-react-components/form-utils/Regex/regex.ts'
+import {AlexSelect} from '../../../shared-react-components/form-utils/AlexSelect/AlexSelect.tsx'
 import {
     AlexAutocompleteControlled,
 } from '../../../shared-react-components/form-utils/alex-autocomplete/alex-autocomplete-controlled.component.tsx'
-import { alexDiff } from '../../function/alex-diff.function.ts'
+import {alexDiff} from '../../function/alex-diff.function.ts'
 
 interface IUserFormProps {
     setOnSubmitFunc: React.Dispatch<React.SetStateAction<{ callback: ((data: any) => void) | null }>>

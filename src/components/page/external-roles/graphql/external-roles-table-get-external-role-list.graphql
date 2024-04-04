@@ -8,6 +8,7 @@ query ExternalRolesTableGetExternalRoleList ($input: TExternalRoleListInput) {
                 recognitionKey
                 createdAt
                 updatedAt
+                default
                 externalService {
                     name
                 }

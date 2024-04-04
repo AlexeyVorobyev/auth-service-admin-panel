@@ -1,17 +1,17 @@
-import React, { FC, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { Box, CircularProgress, Grid, Paper, Stack, Typography } from '@mui/material'
-import { theme } from '../../theme/theme'
-import { AlexDataView } from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView'
-import { useLazyQuery } from '@apollo/client'
+import React, {FC, useEffect, useMemo} from 'react'
+import {useSearchParams} from 'react-router-dom'
+import {Box, CircularProgress, Grid, Paper, Stack, Typography} from '@mui/material'
+import {theme} from '../../theme/theme'
+import {AlexDataView} from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView'
+import {useLazyQuery} from '@apollo/client'
 import {
     UserCardGetUserRecordDocument,
     UserCardGetUserRecordQuery,
     UserCardGetUserRecordQueryVariables,
 } from '../../../types/graphql/graphql.ts'
-import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
-import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
-import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
+import {AlexContentProvider} from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
+import {AlexChip} from '../../../shared-react-components/AlexChip/AlexChip.tsx'
+import {EERoleToRusName} from '../../enum/erole-to-rus-name.enum.ts'
 
 export const UserCard: FC = () => {
     const [searchParams] = useSearchParams()
@@ -75,8 +75,13 @@ export const UserCard: FC = () => {
                                         <AlexDataView label={'Роль сервиса авторизации'}>
                                             <Box>
                                                 <AlexChip label={EERoleToRusName[userData.role]}
-                                                          sx={{ width: '100px' }}/>
+                                                          sx={{width: '100px'}}/>
                                             </Box>
+                                        </AlexDataView>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <AlexDataView label={'Пользователь подтверждён'}>
+                                            {userData.verified ? 'Да' : 'нет'}
                                         </AlexDataView>
                                     </Grid>
                                 </Grid>

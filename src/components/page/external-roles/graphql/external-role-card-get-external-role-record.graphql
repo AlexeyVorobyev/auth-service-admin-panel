@@ -7,7 +7,9 @@ query ExternalRoleCardGetExternalRoleRecord ($input: TIdInput!) {
             name
             description
             recognitionKey
+            default
             externalService {
+                id
                 name
             }
         }

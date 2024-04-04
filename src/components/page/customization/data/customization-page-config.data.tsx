@@ -11,6 +11,8 @@ import { ExternalServiceCard } from '../../external-services/external-service-ca
 import { ExternalServiceForm } from '../../external-services/external-service-form.component.tsx'
 import { UserForm } from '../../users/user-form.component.tsx'
 import { ExternalRolesTable } from '../../external-roles/external-roles-table.component.tsx'
+import {ExternalRoleForm} from '../../external-roles/external-role-form.component.tsx'
+import {ExternalRoleCard} from '../../external-roles/external-role-card.component.tsx'
 
 
 export const customizationPageConfig: Map<string, TCustomizationPageConfig> = new Map([
@@ -66,18 +68,18 @@ export const customizationPageConfig: Map<string, TCustomizationPageConfig> = ne
                 title: 'внешних ролей',
                 button: 'новую внешнюю роль',
             },
-            // [EPageType.view]: {
-            //     component: <ExternalServiceCard/>,
-            //     button: 'внешней роли',
-            // },
-            // [EPageType.add]: {
-            //     component: ExternalServiceForm,
-            //     title: 'внешней роли',
-            // },
-            // [EPageType.edit]: {
-            //     component: ExternalServiceForm,
-            //     title: 'внешней роли',
-            // },
+            [EPageType.view]: {
+                component: <ExternalRoleCard/>,
+                button: 'внешней роли',
+            },
+            [EPageType.add]: {
+                component: ExternalRoleForm,
+                title: 'внешней роли',
+            },
+            [EPageType.edit]: {
+                component: ExternalRoleForm,
+                title: 'внешней роли',
+            },
         },
     ],
 ])

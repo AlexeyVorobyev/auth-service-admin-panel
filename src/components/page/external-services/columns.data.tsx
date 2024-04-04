@@ -1,10 +1,8 @@
-import { theme } from '../../theme/theme.ts'
-import { AlexCheckBox } from '../../../shared-react-components/form-utils/AlexCheckBox/AlexCheckBox.tsx'
-import { AlexChip } from '../../../shared-react-components/AlexChip/AlexChip.tsx'
-import { Stack } from '@mui/material'
-import { TExternalServiceAttributes, TUserAttributes } from '../../../types/graphql/graphql.ts'
-import { TCustomDataTableColumn } from '../../../shared-react-components/alex-data-table/alex-data-table.component.tsx'
-import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
+import {theme} from '../../theme/theme.ts'
+import {AlexChip} from '../../../shared-react-components/AlexChip/AlexChip.tsx'
+import {Stack} from '@mui/material'
+import {TExternalServiceAttributes} from '../../../types/graphql/graphql.ts'
+import {TCustomDataTableColumn} from '../../../shared-react-components/alex-data-table/alex-data-table.component.tsx'
 
 export const ExternalServicesTableColumns: TCustomDataTableColumn[] = [
     {

@@ -20,6 +20,7 @@ import {
 } from '../../../shared-react-components/functions/useAlexPageState/useAlexPageState.tsx'
 import { useLocation } from 'react-router-dom'
 import { varsBehaviourMapExternalRoles } from './vars-behaviour-map-external-roles.adapter.ts'
+import {EPageType} from '../customization/customization-page.component.tsx'
 
 enum EExternalRolesTableStoredParams {
     page = 'page',
@@ -83,20 +84,20 @@ export const ExternalRolesTable: FC = () => {
                        serverSideOptions={serverSideOptions}
                        setServerSideOptions={setServerSideOptions}
                        actionsConfig={{
-                           // view: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.view}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
-                           // edit: {
-                           //     columnName: 'id',
-                           //     path: `./../${EPageType.edit}`,
-                           //     params: new URLSearchParams([
-                           //         ['from', JSON.stringify(location.pathname + location.search)],
-                           //     ]),
-                           // },
+                           view: {
+                               columnName: 'id',
+                               path: `./../${EPageType.view}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
+                           edit: {
+                               columnName: 'id',
+                               path: `./../${EPageType.edit}`,
+                               params: new URLSearchParams([
+                                   ['from', JSON.stringify(location.pathname + location.search)],
+                               ]),
+                           },
                            delete: {
                                columnName: 'id',
                                mutation: deleteExternalRoleByIdMutation,

@@ -1,46 +1,25 @@
-import React, { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { Box, CircularProgress, Grid } from '@mui/material'
-import { useFormContext } from 'react-hook-form'
-import { theme } from '../../theme/theme'
+import React, {FC, useEffect, useLayoutEffect, useMemo, useRef} from 'react'
+import {Box, CircularProgress, Grid} from '@mui/material'
+import {useFormContext} from 'react-hook-form'
+import {theme} from '../../theme/theme'
+import {AlexInputControlled} from '../../../shared-react-components/form-utils/AlexInput/AlexInputControlled.tsx'
+import {useNavigate, useSearchParams} from 'react-router-dom'
+import {extractIds} from '../../../shared-react-components/functions/extractIds'
+import {useLazyQuery, useMutation} from '@apollo/client'
 import {
-    AlexInputControlled,
-    EInputType,
-} from '../../../shared-react-components/form-utils/AlexInput/AlexInputControlled.tsx'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { extractIds } from '../../../shared-react-components/functions/extractIds'
-import {
-    AlexCheckBoxControlled,
-} from '../../../shared-react-components/form-utils/AlexCheckBox/AlexCheckBoxControlled.tsx'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import {
-    ERole,
-    TUserCreateInput,
-    TUserUpdatePayloadInput,
-    UserCardGetUserRecordDocument,
-    UserCardGetUserRecordQuery,
-    UserCardGetUserRecordQueryVariables,
-    UserFormCreateUserDocument,
-    UserFormCreateUserMutation,
-    UserFormCreateUserMutationVariables,
-    UserFormUpdateUserDocument,
-    UserFormUpdateUserMutation,
-    UserFormUpdateUserMutationVariables,
-    ExternalServicesTableGetExternalServiceListDocument,
     ExternalServiceCardGetExternalServiceRecordDocument,
-    ExternalServiceFormUpdateExternalServiceDocument,
-    ExternalServiceFormCreateExternalServiceDocument,
     ExternalServiceCardGetExternalServiceRecordQuery,
     ExternalServiceCardGetExternalServiceRecordQueryVariables,
-    TExternalServiceUpdateInput,
-    TExternalServiceCreateInput,
+    ExternalServiceFormCreateExternalServiceDocument, ExternalServiceFormCreateExternalServiceMutation,
     ExternalServiceFormCreateExternalServiceMutationVariables,
+    ExternalServiceFormUpdateExternalServiceDocument, ExternalServiceFormUpdateExternalServiceMutation,
     ExternalServiceFormUpdateExternalServiceMutationVariables,
+    ExternalServicesTableGetExternalServiceListDocument,
+    TExternalServiceCreateInput,
+    TExternalServiceUpdateInput,
 } from '../../../types/graphql/graphql.ts'
-import { EERoleToRusName } from '../../enum/erole-to-rus-name.enum.ts'
-import { AlexContentProvider } from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
-import { validEmail, validPassword } from '../../../shared-react-components/form-utils/Regex/regex.ts'
-import { AlexSelect } from '../../../shared-react-components/form-utils/AlexSelect/AlexSelect.tsx'
-import { updatedDiff } from 'deep-object-diff'
+import {AlexContentProvider} from '../../../shared-react-components/alex-content/alex-content-provider.component.tsx'
+import {updatedDiff} from 'deep-object-diff'
 
 interface IExternalServiceFormProps {
     setOnSubmitFunc: React.Dispatch<React.SetStateAction<{ callback: ((data: any) => void) | null }>>
@@ -57,13 +36,13 @@ export const ExternalServiceForm: FC<IExternalServiceFormProps> = ({
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
-    const [updateExternalServiceMutation] = useMutation<UserFormUpdateUserMutation>(ExternalServiceFormUpdateExternalServiceDocument, {
+    const [updateExternalServiceMutation] = useMutation<ExternalServiceFormUpdateExternalServiceMutation>(ExternalServiceFormUpdateExternalServiceDocument, {
         refetchQueries: [
             {query: ExternalServicesTableGetExternalServiceListDocument}
         ],
     })
 
-    const [createExternalServiceMutation] = useMutation<UserFormCreateUserMutation>(ExternalServiceFormCreateExternalServiceDocument, {
+    const [createExternalServiceMutation] = useMutation<ExternalServiceFormCreateExternalServiceMutation>(ExternalServiceFormCreateExternalServiceDocument, {
         refetchQueries: [
             {query: ExternalServicesTableGetExternalServiceListDocument}
         ],
