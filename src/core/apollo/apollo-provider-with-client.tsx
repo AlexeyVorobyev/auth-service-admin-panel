@@ -1,23 +1,18 @@
 import {FC, ReactNode} from 'react'
-import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from '@apollo/client'
+import {ApolloClient, ApolloProvider, createHttpLink, fromPromise, InMemoryCache} from '@apollo/client'
 import {serverErrorAfterware} from './afterware/server-error-afterware.ts'
 import {GLOBAL_CONFIG} from '../../globalConfig.ts'
 import {setContext} from '@apollo/client/link/context'
 import {
     ETokenAndExpiryLocalStorageKeys,
-    getTokensAndExpiry,
-    setTokensAndExpiry,
+    getTokensAndExpiry, setTokensAndExpiry,
 } from '../../components/function/auth-token-and-expiry.function.ts'
+import {onError} from '@apollo/client/link/error'
 import {ApolloGetAuthRefreshDocument} from '../../types/graphql/graphql.ts'
 
-const httpLink = createHttpLink({
-    uri: GLOBAL_CONFIG.apiAuthServiceAddress,
-})
-
-const authLink = setContext((_, {headers}) => {
-    console.log(parseInt(getTokensAndExpiry().accessExpiry!), Date.parse(new Date().toUTCString()))
-    if (parseInt(getTokensAndExpiry().accessExpiry!) < Date.parse(new Date().toUTCString())) {
-        defaultClient.query({
+const refreshTokens = async () => {
+    try {
+        const response = await defaultClient.query({
             query: ApolloGetAuthRefreshDocument,
             variables: {
                 input: {
@@ -25,19 +20,45 @@ const authLink = setContext((_, {headers}) => {
                 },
             },
         })
-            .then((response) => {
-                setTokensAndExpiry(response.data.auth.refresh)
-                window.location.reload()
-            })
-            .catch(() => {
-                localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessToken)
-                localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshToken)
-                localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshExpiry)
-                localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessExpiry)
-                window.location.reload()
-            })
-    }
 
+        if (response.data.auth.refresh) {
+            setTokensAndExpiry(response.data.auth.refresh)
+        } else {
+            localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessToken)
+            localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshToken)
+            localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshExpiry)
+            localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessExpiry)
+        }
+    } catch (e) {
+        localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessToken)
+        localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshToken)
+        localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.refreshExpiry)
+        localStorage.removeItem(ETokenAndExpiryLocalStorageKeys.accessExpiry)
+    }
+}
+
+const httpLink = createHttpLink({
+    uri: GLOBAL_CONFIG.apiAuthServiceAddress,
+})
+
+type TOriginalError = {
+    statusCode: number
+}
+
+export const errorLink = onError(({graphQLErrors, operation, forward}) => {
+    console.debug(graphQLErrors)
+    if (graphQLErrors) {
+        switch ((graphQLErrors[0] as any)?.statusCode) {
+            case 400: {
+                return fromPromise(refreshTokens()).flatMap(() => {
+                    return forward(operation)
+                })
+            }
+        }
+    }
+})
+
+const authLink = setContext((_, {headers}) => {
     const token = localStorage.getItem(ETokenAndExpiryLocalStorageKeys.accessToken)
 
     return {
@@ -50,9 +71,11 @@ const authLink = setContext((_, {headers}) => {
 
 const defaultClient = new ApolloClient({
     cache: new InMemoryCache(),
-    link: authLink.concat(
-        serverErrorAfterware.concat(
-            httpLink,
+    link: errorLink.concat(
+        authLink.concat(
+            serverErrorAfterware.concat(
+                httpLink,
+            ),
         ),
     ),
 })
