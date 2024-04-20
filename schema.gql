@@ -94,6 +94,14 @@ input TDatePeriodInput {
   startDate: DateTime
 }
 
+type TDefaultAttributes {
+  """id of deleted entity"""
+  id: UUID!
+
+  """Status metadata"""
+  operationMeta: TOperationMetaAttributes!
+}
+
 type TExternalRoleAttributes {
   """Entity creation datetime"""
   createdAt: DateTime!
@@ -228,7 +236,7 @@ type TExternalRoleMutations {
   create(input: TExternalRoleCreateInput!): TExternalRoleAttributes!
 
   """Provides functionality of deleting external role by id."""
-  delete(input: TIdInput!): String!
+  delete(input: TIdInput!): TDefaultAttributes!
 
   """Provides functionality of editing external role by id."""
   update(input: TExternalRoleUpdateInput!): TExternalRoleAttributes!
@@ -384,7 +392,7 @@ type TExternalServiceMutations {
   create(input: TExternalServiceCreateInput!): TExternalServiceAttributes!
 
   """Provides functionality of deleting external service by id."""
-  delete(input: TIdInput!): String!
+  delete(input: TIdInput!): TDefaultAttributes!
 
   """Provides functionality of editing external service by id."""
   update(input: TExternalServiceUpdateInput!): TExternalServiceAttributes!
@@ -622,10 +630,10 @@ type TUserMutations {
   create(input: TUserCreateInput!): TUserAttributes!
 
   """Provides functionality of deleting user by id."""
-  delete(input: TIdInput!): String!
+  delete(input: TIdInput!): TDefaultAttributes!
 
   """Provides functionality of deleting yourself"""
-  deleteMe: String!
+  deleteMe: TDefaultAttributes!
 
   """Provides functionality of editing user by id."""
   update(input: TUserUpdateInput!): TUserAttributes!
