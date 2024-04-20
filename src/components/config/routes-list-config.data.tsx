@@ -4,12 +4,13 @@ import { CabinetPage } from '../page/cabinet/cabinet-page.component.tsx'
 import { TRoute } from '../../shared-react-components/AlexRouter/AlexRouter.tsx'
 import { CustomizationPage, EPageType } from '../page/customization/customization-page.component.tsx'
 import { customizationPageConfig } from '../page/customization/data/customization-page-config.data.tsx'
+import {MainPage} from '../page/main/main-page.component.tsx'
 
 export const routesListConfig: TRoute[] = [
     {
         path: '/',
         name: 'Главная',
-        component: null,
+        component: <MainPage/>,
     },
 
     {

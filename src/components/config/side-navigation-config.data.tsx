@@ -8,25 +8,25 @@ export const sideNavigationConfig: TSideNavigationConfig[] = [
     {
         path: '/',
         name: 'Главная',
-        icon: <AlexIcon iconName={EIconToNameMap.barChart}/>,
+        icon: <AlexIcon icon={EIconToNameMap.barChart}/>,
     },
 
     {
         path: `customization/users/${EPageType.table}`,
         name: 'Настройка пользователей',
-        icon: <AlexIcon iconName={EIconToNameMap.manageAccounts}/>,
+        icon: <AlexIcon icon={EIconToNameMap.manageAccounts}/>,
     },
 
     {
         path: `customization/externalServices/${EPageType.table}`,
         name: 'Настройка внешних сервисов',
-        icon: <AlexIcon iconName={EIconToNameMap.link}/>,
+        icon: <AlexIcon icon={EIconToNameMap.link}/>,
     },
 
     {
         path: `customization/externalRoles/${EPageType.table}`,
         name: 'Настройка внешних ролей',
-        icon: <AlexIcon iconName={EIconToNameMap.assignment}/>,
+        icon: <AlexIcon icon={EIconToNameMap.assignment}/>,
     },
 
     // {
