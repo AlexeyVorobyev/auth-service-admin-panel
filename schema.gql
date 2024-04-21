@@ -48,6 +48,17 @@ enum ESortDirection {
   descending
 }
 
+"""Aggregation criteria"""
+enum ETimeAggregation {
+  DAY
+  HOUR
+  MINUTE
+  MONTH
+  NO_AGG
+  WEEK
+  YEAR
+}
+
 type Mutation {
   auth: TAuthMutations!
   externalRole: TExternalRoleMutations!
@@ -59,6 +70,7 @@ type Query {
   auth: TAuthQueries!
   externalRole: TExternalRoleQueries!
   externalService: TExternalServiceQueries!
+  stat: TStatQueries!
   user: TUserQueries!
 }
 
@@ -489,6 +501,47 @@ input TSortInput {
   direction: ESortDirection
 }
 
+type TStatQueries {
+  """Provides functionality of getting stat of users registration"""
+  userRegistrationHistoryList(input: TStatUserRegistrationHistoryInput!): TUserRegistrationHistoryListAttributes!
+
+  """Provides functionality of getting stat of users registration"""
+  userTotalAmount: TUserTotalAmountAttributes!
+}
+
+type TStatSummaryAttributes {
+  """last"""
+  last: Float
+
+  """max"""
+  max: Float
+
+  """mean"""
+  mean: Float
+
+  """min"""
+  min: Float
+
+  """sum"""
+  sum: Float
+}
+
+input TStatUserRegistrationHistoryInput {
+  """Datetime period criteria"""
+  datePeriod: TDatePeriodInput!
+
+  """Aggregation criteria"""
+  timeAggregation: ETimeAggregation = NO_AGG
+}
+
+type TStatValueAttributes {
+  """Date of current value"""
+  time: DateTime!
+
+  """Value"""
+  value: Float!
+}
+
 type TTokenDataAttributes {
   """Access JWT token"""
   accessToken: String!
@@ -651,6 +704,25 @@ type TUserQueries {
 
   """Provides user information."""
   recordMe: TUserAttributes!
+}
+
+type TUserRegistrationHistoryListAttributes {
+  """stat data"""
+  data: [TStatValueAttributes!]!
+
+  """Status metadata"""
+  operationMeta: TOperationMetaAttributes!
+
+  """stat summary"""
+  summary: TStatSummaryAttributes!
+}
+
+type TUserTotalAmountAttributes {
+  """stat data"""
+  data: Float!
+
+  """Status metadata"""
+  operationMeta: TOperationMetaAttributes!
 }
 
 input TUserUpdateInput {

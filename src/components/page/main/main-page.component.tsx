@@ -1,8 +1,7 @@
-import {FC, useEffect, useMemo, useRef, useState} from 'react'
+import {FC, useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {Box, Stack, Typography, useTheme} from '@mui/material'
 import useWindowSize from '../../../shared-react-components/functions/useWindowSize.tsx'
 import {ReactChart} from '../../../shared-react-components/alex-react-chart/ReactChart.tsx'
-import {AlexDataView} from '../../../shared-react-components/form-utils/AlexDataView/AlexDataView.tsx'
 import {
     EUsePageStateMode,
     useAlexPageState,
@@ -14,6 +13,17 @@ import {mainPageVarsBehaviourMap} from './main-page-vars-behaviour-map.ts'
 import {dateBuilder} from '../../../shared-react-components/functions/date-builder.ts'
 import ChoosePeriod from '../../../shared-react-components/alex-react-chart/choose-period/choose-period.tsx'
 import Aggregation from '../../../shared-react-components/alex-react-chart/aggregation/Aggregation.tsx'
+import {EFormatType} from '../../../shared-react-components/alex-react-chart/enums/format-type.enum.ts'
+import {EGraphType} from '../../../shared-react-components/alex-react-chart/enums/EGraphType.ts'
+import {
+    TGetNewDataCallback,
+} from '../../../shared-react-components/alex-react-chart/dialog-react-chart/dialog-react-chart.tsx'
+import {
+    MainPageUserRegistrationHistoryDocument,
+    MainPageUserRegistrationHistoryQuery, MainPageUserTotalAmountDocument, MainPageUserTotalAmountQuery,
+    TStatUserRegistrationHistoryInput, TStatValueAttributes,
+} from '../../../types/graphql/graphql.ts'
+import {useLazyQuery} from '@apollo/client'
 
 export enum EStoredOptionsMainPage {
     timeAgg = 'timeAgg',
@@ -23,8 +33,8 @@ export const MainPage: FC = () => {
     const {
         storedOptions,
         setStoredOptions,
-        variables
-    } = useAlexPageState<any>({
+        variables,
+    } = useAlexPageState<TStatUserRegistrationHistoryInput>({
         modeRead: [
             EUsePageStateMode.queryString,
             EUsePageStateMode.localStorage,
@@ -38,11 +48,11 @@ export const MainPage: FC = () => {
         defaultValue: new Map<EStoredOptionsMainPage, any>([
             [EStoredOptionsMainPage.timeAgg, {
                 periodStorage: ERangeType.WEEK,
-                startDash: dateBuilder({ date: new Date().getDate() - 7 })(),
+                startDash: dateBuilder({date: new Date().getDate() - 7})(),
                 endDash: new Date(),
-                aggregation: ETimeAggregation.DAY
+                aggregation: ETimeAggregation.DAY,
             } as TTimeAgg],
-        ])
+        ]),
     })
 
     const theme = useTheme()
@@ -64,6 +74,78 @@ export const MainPage: FC = () => {
         })
     }
 
+    const [lazyGetUserTotalAmount, {
+        data: userTotalAmountQueryData,
+        loading: userTotalAmountQueryLoading,
+    }] = useLazyQuery<MainPageUserTotalAmountQuery>(
+        MainPageUserTotalAmountDocument,
+    )
+
+    const [lazyGetUserRegistrationHistory, {
+        data: userRegistrationHistoryQueryData,
+        loading: userRegistrationHistoryQueryLoading,
+    }] = useLazyQuery<MainPageUserRegistrationHistoryQuery>(
+        MainPageUserRegistrationHistoryDocument,
+    )
+
+    const [lazyGetUserRegistrationHistoryCallback] = useLazyQuery<MainPageUserRegistrationHistoryQuery>(
+        MainPageUserRegistrationHistoryDocument,
+    )
+
+    useEffect(() => {
+        lazyGetUserTotalAmount()
+    }, [])
+
+    useEffect(() => {
+        if (variables) {
+            lazyGetUserRegistrationHistory({
+                variables: {
+                    input: variables,
+                },
+            })
+        }
+    }, [variables])
+
+    const getNewGraphValuesCallback: TGetNewDataCallback = useCallback(async (aggregation, range) => {
+        const data = await lazyGetUserRegistrationHistoryCallback({
+            variables: {
+                input: {
+                    timeAggregation: aggregation,
+                    datePeriod: {
+                        startDate: (new Date(range.startDateTime)).toISOString(),
+                        endDate: (new Date(range.endDateTime)).toISOString()
+                    }
+                },
+            },
+        })
+
+        if (data?.data?.stat.userRegistrationHistoryList.data) {
+            return {
+                dateRange: {
+                    startDateTime: range.startDateTime,
+                    endDateTime: range.endDateTime,
+                },
+                graphType: EGraphType.LINE,
+                valueFormat: EFormatType.TIME,
+                datasets: [{
+                    title: 'Регистраций пользователей',
+                    inverted: false,
+                    valueFormat: EFormatType.TIME,
+                    color: '#123456',
+                    summary: data.data.stat.userRegistrationHistoryList.summary,
+                    measures: data.data.stat.userRegistrationHistoryList.data as TStatValueAttributes[],
+                }],
+            }
+        } else {
+            return null
+        }
+    }, [])
+
+    const userRegistrationHistoryData = useMemo(
+        () => userRegistrationHistoryQueryData?.stat.userRegistrationHistoryList,
+        [userRegistrationHistoryQueryData],
+    )
+
     return (
         <Box sx={{
             width: '100%',
@@ -72,11 +154,12 @@ export const MainPage: FC = () => {
             overflowY: 'scroll',
             height: '100%',
         }}>
-            <Stack direction={'column'} gap={theme.spacing(3)} padding={theme.spacing(3)} boxSizing={'border-box'} width={'100%'} flex={1}>
+            <Stack direction={'column'} gap={theme.spacing(3)} padding={theme.spacing(3)} boxSizing={'border-box'}
+                   width={'100%'} flex={1}>
                 <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
 
                     <Stack direction={'row'} spacing={'20px'} alignItems={'center'}>
-                        <Typography variant={'h4'}>Общее количество пользователей: 0</Typography>
+                        <Typography variant={'h4'}>Общее количество пользователей: {userTotalAmountQueryData?.stat.userTotalAmount.data}</Typography>
                     </Stack>
 
                     <Stack direction={'row'} alignItems={'center'} gap={theme.spacing(3)}>
@@ -103,18 +186,37 @@ export const MainPage: FC = () => {
 
                 </Stack>
                 <Stack alignItems={'center'} justifyContent={'center'} flex={1} ref={refBox}>
-                    {windowHeight && (
+                    {(windowHeight && timeAgg && userRegistrationHistoryData) && (
                         <ReactChart
-                            height={windowHeight}
-                            useButtonForGraphType
-                            useButtonForTitle
+                            getNewDataCallback={getNewGraphValuesCallback}
+                            defaultStoredParams={{
+                                showTitle: false,
+                            }}
+                            loading={userRegistrationHistoryQueryLoading}
+                            data={{
+                                dateRange: {
+                                    startDateTime: timeAgg?.startDash,
+                                    endDateTime: timeAgg?.endDash,
+                                },
+                                graphType: EGraphType.LINE,
+                                valueFormat: EFormatType.TIME,
+                                datasets: [{
+                                    title: 'Регистраций пользователей',
+                                    inverted: false,
+                                    valueFormat: EFormatType.TIME,
+                                    color: '#123456',
+                                    measures: userRegistrationHistoryData.data,
+                                    summary: userRegistrationHistoryData.summary
+                                }],
+                            }}
+                            height={windowHeight} useButtonForGraphType
                             useButtonForLegend
-                            useDialogReactChart
-                            useButtonForThresholds
+                            useDialogReactChart useButtonForThresholds
                             styles={{
                                 paper: {
-                                    width: '100%'
-                                }
+                                    width: '100%',
+                                    position: 'relative',
+                                },
                             }}/>
                     )}
                 </Stack>
