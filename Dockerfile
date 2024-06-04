@@ -1,32 +1,25 @@
-FROM node:latest as builder
+# Stage 1: cache yarn packages
+ARG NODE_IMAGE=node:latest
+ARG NGINX_IMAGE=nginx:latest
 
-# Define build arguments for environment variables
-ARG VITE_APP_API_AUTH_SERVICE_ADDRESS
-ARG VITE_APP_ENTRYPOINT_SERVICE_NGINX_ADDRESS
-
-# Set environment variables during the build process
-ENV VITE_APP_API_AUTH_SERVICE_ADDRESS=$VITE_APP_API_AUTH_SERVICE_ADDRESS
-ENV VITE_APP_ENTRYPOINT_SERVICE_NGINX_ADDRESS=$VITE_APP_ENTRYPOINT_SERVICE_NGINX_ADDRESS
-
-WORKDIR /app
-COPY package*.json ./
+FROM ${NODE_IMAGE} as yarn-cache-deps
+WORKDIR /app/
+COPY package.json ./
 COPY yarn.lock ./
-
 RUN yarn install --ignore-engines
 
-COPY . .
-
+# Stage 2: build sources
+FROM yarn-cache-deps as builder
+WORKDIR /app/
+COPY . ./
 RUN yarn build
 
-FROM node:latest
-
-WORKDIR /app
-
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/yarn.lock ./
-COPY --from=builder /app/dist ./dist
-
-EXPOSE 3000
-
-CMD [ "yarn", "serve:prod" ]
+# Stage 3: run nginx:
+FROM ${NGINX_IMAGE}
+ENV NGINX_PORT 80
+ENV NGINX_HOST localhost
+RUN mkdir -p /opt/frontend
+COPY --from=builder /app/opt/frontend /opt/frontend
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE ${NGINX_PORT}
+ENTRYPOINT ["/bin/dash", "/opt/frontend/nginx-run.sh"]

@@ -6,7 +6,7 @@
   "homepage": "https://alexeyvorobyev.github.io/vega_admin_frontend/",
   "scripts": {
     "start:dev": "NODE_ENV=development vite --mode development",
-    "build": "NODE_ENV=prod tsc && vite build --mode prod",
+    "build": "NODE_ENV=prod tsc && vite build --mode production",
     "build-no-tsc": "vite build",
     "serve:prod": "serve -s dist",
     "serve:prod:preview": "vite preview",
